@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="map.css" rel="stylesheet" type="text/css" />
+    <title>Jeu de dame</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="home">
+        <h1>Jeu de dame en ligne</h1>
+        <form id="userForm" action="/game.html">
+            <div class="formCase">
+                <label for="pseudo"> Pseudo : </label> <input type="text" placeholder="Pseudo" />
+            </div>
+            <div class="formCase">
+                <label for="password"> Mot de passe : </label> <input type="password" placeholder="Mot de passe" />
+            </div>
+          <input type="submit" value="Jouer" name="submit" />
+        </form>
+      </div>
+
+      <div id="regle">
+        <h1>Regle du jeu</h1>
+        <ul>
+          <li>Le Pion se déplace diagonalement d’une seule case.</li>
+          <li>Le Pion se déplace toujours sur une case libre.</li>
+          <li>Le Pion ne recule pas.</li>
+          <li>Lorsque le Pion atteint la dernière rangée (la dernière ligne horizontale), il devient une Dame.</li>
+          <li>Les prises sont obligatoires.</li>
+          <li>un Pion peut reculer en mangeant !</li>
+          <li> <a href="https://www.regledujeu.fr/regle-jeu-de-dames/"> etc... </a> </li>
+        </ul>
+      </div>
+    </div>
+
+  </body>
+</html>
