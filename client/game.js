@@ -15,15 +15,15 @@ $(document).ready(function () {
 
     let tile = [];
     let tileDiv = "";
+    let currentTile = "";
+
 
     function Tile(row, col) { // Construit un constructeur de la map qui prend en parametre la row et la col 
+        this.value = map[row][col];
         this.row = row;
         this.col = col;
-        this.value = map[row][col];
 
         this.dessine = function () { //Dessine les pions svg
-            this.value = map[row][col];
-
             if (this.value == 1) { 
                 $("#tile" + this.row + this.col).html("");
             } else if (this.value == WHITE_PAWN) { //On ajoute au sein de la div le svg du pion blanc si la div en contient un
@@ -51,11 +51,19 @@ $(document).ready(function () {
         for (let row = 0; row < 8; row++) {
             for (let col = 0; col < 8; col++) {
                 tile[row][col].dessine();
-                $('#tile' + row + col).click(function () {
-                    $('#' + this.id).css('animation-duration', '.8s');
-                    $('#' + this.id).css('animation-name', 'clignoter');
-                    $('#' + this.id).css('animation-iteration-count', 'infinite');
-                    $('#' + this.id).css('transition', 'none');
+                $('#tile' + row + col).click(function () { //ajoute un effet de clignotement quand on clique sur une case
+                    
+                    if (currentTile != this.id) {
+                        if (currentTile != "") { //Permet d'enlever l'animation sur la case précédente
+                            $('#' + currentTile).css('animation-name', '');
+                        }
+                        currentTile = this.id; //Défini la nouvelle case courante
+                        $('#' + currentTile).css('animation-duration', '.8s');
+                        $('#' + currentTile).css('animation-name', 'clignoter');
+                        $('#' + currentTile).css('animation-iteration-count', 'infinite');
+                        $('#' + currentTile).css('transition', 'none');
+                        console.log(currentTile);
+                    }
                 });
             }
         }
