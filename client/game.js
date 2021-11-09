@@ -66,7 +66,7 @@ $(document).ready(function () {
         if (currentPlayer == PLAYER_ONE) { // Si le joueur courant est le joueur 1 on passe au joueur 2
             currentPlayer = PLAYER_TWO;
         } else {
-            currentPlayer = PLAYER_TWO;
+            currentPlayer = PLAYER_ONE;
         }
     }
 
