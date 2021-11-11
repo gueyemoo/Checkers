@@ -105,6 +105,31 @@ $(document).ready(function () {
         }
     }
 
+    function isMovePossible(tile) {
+        let clickedRow = getRow(tile);
+        let clickedCol = getCol(tile);
+        let currentRow = getRow(currentTile);
+        let currentCol = getCol(currentTile);
+
+        // console.log("test: " + (clickedCol - currentCol == 1));
+        // console.log("valeur de clickedRow : " + clickedCol);
+        // console.log("valeur de currentRow : " + currentCol);
+
+        if (map[clickedRow][clickedCol] == 1 //Verifie qu'on va bien sur une case noir vide
+            && currentPlayer == PLAYER_ONE //check que c'est le joueur 1
+            && map[currentRow][currentCol] == RED_PAWN //check qu'on selectionne un pion rouge 
+            && (clickedRow - currentRow == 1) //Check la différence entre clickedRow(la ligne ou on va) et currentRow(la ligne ou on est) n'est que de 1 car on ne peut pas se déplacer en sautant plusieurs ligne
+            && Math.abs(clickedCol - currentCol) == 1) { //Check similiaire à la ligne MAIS on mets la valeur absolu car dépendamment de notre position le resultat sera de -1 ou 1 en cas de déplcament mais ce qui nous interesse c'est juste la différence de 1 ici
+            return true;
+        } else if (map[clickedRow][clickedCol] == 1
+            && currentPlayer == PLAYER_TWO
+            && map[currentRow][currentCol] == WHITE_PAWN
+            && (clickedRow - currentRow == -1) //-1 car le pion remonte
+            && Math.abs(clickedCol - currentCol) == 1) {
+            return true;
+        }
+    }
+
     function createMap() { //Crée la map du jeu 
         for (let row = 0; row < 8; row++) {
             tile[row] = [];
@@ -126,7 +151,7 @@ $(document).ready(function () {
 
                     if (checkPawnANDPlayer(this.id)) {
                         clickedTile(this.id);
-                    } else if (currentTile != "") {
+                    } else if (currentTile != "" && isMovePossible(this.id)) {
                         makeMove(this.id);
                     }
 
