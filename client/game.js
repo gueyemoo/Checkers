@@ -10,6 +10,9 @@ $(document).ready(function () {
         [2, 0, 2, 0, 2, 0, 2, 0]
     ];
 
+    const EMPTY_WHITE_TILE = 0;
+    const EMPTY_BLACK_TILE = 1;
+
     const WHITE_PAWN = 2;
     const RED_PAWN = 3;
 
@@ -51,13 +54,10 @@ $(document).ready(function () {
     function clickedTile(tile) { //Permet d'animer la case sur laquel le joueur clique
         if (currentTile != tile) {
             if (currentTile != "") { //Permet d'enlever l'animation sur la case précédente
-                $('#' + currentTile).css('animation-name', '');
+                stopAnimation(tile);
             }
             currentTile = tile; //Défini la nouvelle case courante 
-            $('#' + currentTile).css('animation-duration', '.8s');
-            $('#' + currentTile).css('animation-name', 'clignoter');
-            $('#' + currentTile).css('animation-iteration-count', 'infinite');
-            $('#' + currentTile).css('transition', 'none');
+            startAnimation(tile);
             console.log(currentTile);
         }
     }
@@ -105,28 +105,133 @@ $(document).ready(function () {
         }
     }
 
-    function isMovePossible(tile) {
-        let clickedRow = getRow(tile);
-        let clickedCol = getCol(tile);
+    function isMovePossible(tile) { //Verifie que le déplacement du pion est possible
         let currentRow = getRow(currentTile);
         let currentCol = getCol(currentTile);
 
-        // console.log("test: " + (clickedCol - currentCol == 1));
-        // console.log("valeur de clickedRow : " + clickedCol);
-        // console.log("valeur de currentRow : " + currentCol);
+        let clickedRow = getRow(tile);
+        let clickedCol = getCol(tile);
 
-        if (map[clickedRow][clickedCol] == 1 //Verifie qu'on va bien sur une case noir vide
-            && currentPlayer == PLAYER_ONE //check que c'est le joueur 1
-            && map[currentRow][currentCol] == RED_PAWN //check qu'on selectionne un pion rouge 
-            && (clickedRow - currentRow == 1) //Check la différence entre clickedRow(la ligne ou on va) et currentRow(la ligne ou on est) n'est que de 1 car on ne peut pas se déplacer en sautant plusieurs ligne
-            && Math.abs(clickedCol - currentCol) == 1) { //Check similiaire à la ligne MAIS on mets la valeur absolu car dépendamment de notre position le resultat sera de -1 ou 1 en cas de déplcament mais ce qui nous interesse c'est juste la différence de 1 ici
-            return true;
-        } else if (map[clickedRow][clickedCol] == 1
-            && currentPlayer == PLAYER_TWO
-            && map[currentRow][currentCol] == WHITE_PAWN
-            && (clickedRow - currentRow == -1) //-1 car le pion remonte
-            && Math.abs(clickedCol - currentCol) == 1) {
-            return true;
+        if (currentTile != "") {
+
+            if (map[clickedRow][clickedCol] == EMPTY_BLACK_TILE //Verifie qu'on va bien sur une case noir vide
+                && currentPlayer == PLAYER_ONE //check que c'est le joueur 1
+                && map[currentRow][currentCol] == RED_PAWN //check qu'on selectionne un pion rouge 
+                && (clickedRow - currentRow == 1) //Check la différence entre clickedRow(la ligne ou on va) et currentRow(la ligne ou on est) n'est que de 1 car on ne peut pas se déplacer en sautant plusieurs ligne
+                && Math.abs(clickedCol - currentCol) == 1) { //Check similiaire à la ligne MAIS on mets la valeur absolu car dépendamment de notre position le resultat sera de -1 ou 1 en cas de déplcament mais ce qui nous interesse c'est juste la différence de 1 ici
+
+                return true;
+            } else if (map[clickedRow][clickedCol] == EMPTY_BLACK_TILE
+                && currentPlayer == PLAYER_TWO
+                && map[currentRow][currentCol] == WHITE_PAWN
+                && (clickedRow - currentRow == -1) //-1 car le pion remonte
+                && Math.abs(clickedCol - currentCol) == 1) {
+                return true;
+            }
+        }
+    }
+
+    function startAnimation(tile) { //Anime une case avec un effet clignotant
+        $('#' + tile).css('animation-duration', '.8s');
+        $('#' + tile).css('animation-name', 'clignoter');
+        $('#' + tile).css('animation-iteration-count', 'infinite');
+        $('#' + tile).css('transition', 'none');
+    }
+
+    function stopAnimation(tile) { //Arrete l'animation d'une case
+        $('#' + tile).css('animation-name', '');
+    }
+
+    function eatPawn(tile) { //Permet de manger un pion
+        if (currentTile != "") {//Si une case est selectionné
+
+            // console.log("test future tile row + current tile row : " + (getRow(tile) + getRow(currentTile) / 2));
+            // console.log("test future tile col + current tile col : " + (getCol(tile) + getCol(currentTile) / 2));
+            // console.log("future tile : " + getRow(tile));
+            // console.log("current tile : " +getRow(currentTile));
+
+            let caseToEatRow = Math.floor(((getRow(tile)) + getRow(currentTile)) / 2); //Recupere la ligne de la case ou le pion doit être manger
+            let caseToEatCol = Math.floor(((getCol(tile)) + getCol(currentTile)) / 2); //Recupere la colonne de la case ou le pion doit être manger
+
+            map[getRow(tile)][getCol(tile)] = map[getRow(currentTile)][getCol(currentTile)]; //change la valeur de la case ou nous allons pour y placer le pion 
+            map[getRow(currentTile)][getCol(currentTile)] = EMPTY_BLACK_TILE; //Vide la case ou on était (vu qu'on se deplace vers une nouvelle case)
+            map[caseToEatRow][caseToEatCol] = EMPTY_BLACK_TILE; //Vide la case du pion manger
+
+            //Réinitialise les variables après avoir manger un pion et change de joueur
+            stopAnimation(currentTile);
+            currentTile = "";
+            caseToEatRow = "";
+            caseToEatCol = "";
+            switchPlayer();
+            draw();
+
+
+        }
+    }
+
+    function doesTileExist(row, col) { //Verifie l'existence d'une case sur le plateau
+        return ((row <= 7 && col <= 7 && row >= 0 && col >= 0) ? true : false);
+    }
+
+    function isEatPossible(tileClicked, tileDestination) { //Verifie la configuration du pion sur le plateau afin de savoir si il peut se déplacer manger un pion ou non
+        let eatPossible = false;
+
+        let clickedRow = getRow(tileClicked);
+        let clickedCol = getCol(tileClicked);
+
+        let destinationRow = getRow(tileDestination);
+        let destinationCol = getCol(tileDestination);
+
+        if (currentTile != "") {
+
+            if (map[clickedRow][clickedCol] == RED_PAWN && currentPlayer == PLAYER_ONE) { //si il s'agit d'un pion rouge et du joueur 1
+                if (doesTileExist(clickedRow + 2, clickedCol + 2) //On verifie que la case en bas à droite existe
+                    && map[clickedRow + 2][clickedCol + 2] == EMPTY_BLACK_TILE //Check si la case d'arrivé est bien vide 
+                    && clickedRow + 2 == destinationRow && clickedCol + 2 == destinationCol // Check si le mouvement est un mouvement possible au dame (empeche le joueur de se "teleporter" et de faire des mouvements interdit)
+                    && map[clickedRow + 1][clickedCol + 1] == WHITE_PAWN) //Check si le pion entre le départ et l'arrivé est bien un pion blanc
+                {
+                    eatPossible = true;
+                } else if (doesTileExist(clickedRow - 2, clickedCol + 2)
+                    && map[clickedRow - 2][clickedCol + 2] == EMPTY_BLACK_TILE //En bas à gauche
+                    && clickedRow - 2 == destinationRow && clickedCol + 2 == destinationCol
+                    && map[clickedRow - 1][clickedCol + 1] == WHITE_PAWN) {
+                    eatPossible = true;
+                } else if (doesTileExist(clickedRow + 2, clickedCol - 2)  //En haut à droite
+                    && map[clickedRow + 2][clickedCol - 2] == EMPTY_BLACK_TILE
+                    && clickedRow + 2 == destinationRow && clickedCol - 2 == destinationCol
+                    && map[clickedRow + 1][clickedCol - 1] == WHITE_PAWN) {
+                    eatPossible = true;
+                } else if (doesTileExist(clickedRow - 2, clickedCol - 2) //En haut à gauche
+                    && map[clickedRow - 2][clickedCol - 2] == 1
+                    && clickedRow - 2 == destinationRow && clickedCol - 2 == destinationCol
+                    && map[clickedRow - 1][clickedCol - 1] == WHITE_PAWN) {
+                    eatPossible = true;
+                }
+            }
+            if (map[clickedRow][clickedCol] == WHITE_PAWN && currentPlayer == PLAYER_TWO) { //si il s'agit d'un pion blanc et du joueur 2
+                if (doesTileExist(clickedRow + 2, clickedCol + 2) //En bas à droite
+                    && map[clickedRow + 2][clickedCol + 2] == EMPTY_BLACK_TILE
+                    && clickedRow + 2 == destinationRow && clickedCol + 2 == destinationCol
+                    && map[clickedRow + 1][clickedCol + 1] == RED_PAWN) {
+                    eatPossible = true;
+                } else if (doesTileExist(clickedRow - 2, clickedCol + 2)
+                    && map[clickedRow - 2][clickedCol + 2] == EMPTY_BLACK_TILE //En bas à gauche
+                    && clickedRow - 2 == destinationRow && clickedCol + 2 == destinationCol
+                    && map[clickedRow - 1][clickedCol + 1] == RED_PAWN) {
+                    eatPossible = true;
+                } else if (doesTileExist(clickedRow + 2, clickedCol - 2)  //En haut à droite
+                    && map[clickedRow + 2][clickedCol - 2] == EMPTY_BLACK_TILE
+                    && clickedRow + 2 == destinationRow && clickedCol - 2 == destinationCol
+                    && map[clickedRow + 1][clickedCol - 1] == RED_PAWN) {
+                    eatPossible = true;
+                } else if (doesTileExist(clickedRow - 2, clickedCol - 2) //En haut à gauche
+                    && map[clickedRow - 2][clickedCol - 2] == 1
+                    && clickedRow - 2 == destinationRow && clickedCol - 2 == destinationCol
+                    && map[clickedRow - 1][clickedCol - 1] == RED_PAWN) {
+                    eatPossible = true;
+                }
+            }
+            return eatPossible;
         }
     }
 
@@ -151,8 +256,13 @@ $(document).ready(function () {
 
                     if (checkPawnANDPlayer(this.id)) {
                         clickedTile(this.id);
-                    } else if (currentTile != "" && isMovePossible(this.id)) {
+                    } else if (isMovePossible(this.id)) {
+                        // console.log("IL PEUT BOUGER");
                         makeMove(this.id);
+                    }
+                    else if (isEatPossible(currentTile, this.id)) {
+                        // console.log("IL PEUT MANGER");
+                        eatPawn(this.id);
                     }
 
                 });
