@@ -82,7 +82,7 @@ $(document).ready(function () {
     function makeMove(tile) { //Permet le "deplacement" d'un pion (on change la valeur de la case sur la map)
         map[getRow(tile)][getCol(tile)] = map[getRow(currentTile)][getCol(currentTile)]; // Place le pion à sa nouvelle position
         map[getRow(currentTile)][getCol(currentTile)] = 1; // Enleve le pion de son ancienne position
-        $('#' + currentTile).css('animation-name', ''); //Enleve l'animation sur la case cliqué après le changement de position
+        stopAnimation(currentTile);//Enleve l'animation sur la case cliqué après le changement de position
         currentTile = "";
         switchPlayer();
         draw();
@@ -135,7 +135,6 @@ $(document).ready(function () {
         $('#' + tile).css('animation-duration', '.8s');
         $('#' + tile).css('animation-name', 'clignoter');
         $('#' + tile).css('animation-iteration-count', 'infinite');
-        $('#' + tile).css('transition', 'none');
     }
 
     function stopAnimation(tile) { //Arrete l'animation d'une case
