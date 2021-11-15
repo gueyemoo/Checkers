@@ -24,6 +24,8 @@ $(document).ready(function () {
     let tileDiv = "";
     let currentTile = "";
 
+    let isNextJumpPossible = false;
+
 
     //GAME LOGIQUE 
     function Tile(row, col) { // Construit un constructeur de la map qui prend en parametre la row et la col 
@@ -52,14 +54,16 @@ $(document).ready(function () {
     }
 
     function clickedTile(tile) { //Permet d'animer la case sur laquel le joueur clique
-        if (currentTile != tile) {
+        if (isNextJumpPossible == false) {
+
             if (currentTile != "") { //Permet d'enlever l'animation sur la case précédente
-                stopAnimation(tile);
+                stopAnimation(currentTile);
             }
             currentTile = tile; //Défini la nouvelle case courante 
             startAnimation(tile);
             console.log(currentTile);
         }
+
     }
 
     function switchPlayer() { //Permet de changer de joueur courant
@@ -68,6 +72,8 @@ $(document).ready(function () {
         } else {
             currentPlayer = PLAYER_ONE;
         }
+
+        showCurrentPlayer(); //Permet d'afficher à l'utilisateur le joueur qui doit actuellement jouer
     }
 
     function showCurrentPlayer() { //Permet d'afficher à l'utilisateur le joueur qui doit actuellement jouer 
@@ -86,12 +92,11 @@ $(document).ready(function () {
         currentTile = "";
         switchPlayer();
         draw();
-        showCurrentPlayer();
     }
 
     function draw() { //Dessine chaque case de la map
-        for (let row = 0; row < 8; row++) {
-            for (let col = 0; col < 8; col++) {
+        for (let row = 0; row < map.length; row++) {
+            for (let col = 0; col < map.length; col++) {
                 tile[row][col].draw();
             }
         }
@@ -141,6 +146,59 @@ $(document).ready(function () {
         $('#' + tile).css('animation-name', '');
     }
 
+    function isEatPossible(tile) { //Verifie la configuration du pion sur le plateau afin de savoir si il peut manger un pion
+        let eatPossible = false;
+        let row = getRow(tile);
+        let col = getCol(tile);
+
+        // console.log("Normalement la case existe: " + doesTileExist(row - 2, col + 2))
+        // console.log("Normalement case vide (1) : " + (map[row - 2][col + 2]))
+        // console.log("Normalement pion blanc (2) : " + (map[row - 1][col + 1]))
+
+        if (currentPlayer == PLAYER_ONE && map[row][col] == RED_PAWN) { //Si c'est le joueur 1 et qu'il s'agit d'un pion rouge
+            if (doesTileExist(row + 2, col + 2) //En bas à droite
+                && map[row + 2][col + 2] == EMPTY_BLACK_TILE //Verifie que la case d'arrive est bien une case noir vide
+                && map[row + 1][col + 1] == WHITE_PAWN) { //Verifie que la case sur le chemin contient bien un pion blanc
+                eatPossible = true;
+            } else if (doesTileExist(row - 2, col + 2) //En bas à gauche
+                && map[row - 2][col + 2] == EMPTY_BLACK_TILE
+                && map[row - 1][col + 1] == WHITE_PAWN) {
+                eatPossible = true;
+            } else if (doesTileExist(row + 2, col - 2) //En haut à droite
+                && map[row + 2][col - 2] == EMPTY_BLACK_TILE
+                && map[row + 1][col - 1] == WHITE_PAWN) {
+                eatPossible = true;
+            } else if (doesTileExist(row - 2, col - 2) //En haut à gauche
+                && map[row - 2][col - 2] == EMPTY_BLACK_TILE
+                && map[row - 1][col - 1] == WHITE_PAWN) {
+                eatPossible = true;
+            }
+        }
+        if (currentPlayer == PLAYER_TWO && map[row][col] == WHITE_PAWN) { // Si il s'agit du joueur 2 et d'un pion blanc
+            if (doesTileExist(row + 2, col + 2)
+                && map[row + 2][col + 2] == EMPTY_BLACK_TILE
+                && map[row + 1][col + 1] == RED_PAWN) { //Verifie que la case sur le chemin contient un pion rouge
+                eatPossible = true;
+            } else if (doesTileExist(row - 2, col + 2)
+                && map[row - 2][col + 2] == EMPTY_BLACK_TILE
+                && map[row - 1][col + 1] == RED_PAWN) {
+
+                eatPossible = true;
+            } else if (doesTileExist(row + 2, col - 2)
+                && map[row + 2][col - 2] == EMPTY_BLACK_TILE
+                && map[row + 1][col - 1] == RED_PAWN) {
+
+                eatPossible = true;
+            } else if (doesTileExist(row - 2, col - 2)
+                && map[row - 2][col - 2] == EMPTY_BLACK_TILE
+                && map[row - 1][col - 1] == RED_PAWN) {
+                eatPossible = true;
+            }
+        }
+        // console.log("EAT POSSIBLE ?????" + eatPossible);
+        return eatPossible;
+    }
+
     function eatPawn(tile) { //Permet de manger un pion
         if (currentTile != "") {//Si une case est selectionné
 
@@ -157,14 +215,30 @@ $(document).ready(function () {
             map[caseToEatRow][caseToEatCol] = EMPTY_BLACK_TILE; //Vide la case du pion manger
 
             //Réinitialise les variables après avoir manger un pion et change de joueur
+
             stopAnimation(currentTile);
-            currentTile = "";
-            caseToEatRow = "";
-            caseToEatCol = "";
-            switchPlayer();
-            draw();
-
-
+            if (isEatPossible(tile) == false) {
+                isNextJumpPossible = false;
+                currentTile = "";
+                caseToEatRow = "";
+                caseToEatCol = "";
+                switchPlayer();
+                draw();
+            } else {
+                isNextJumpPossible = true;
+                currentTile = tile;
+                startAnimation(currentTile);
+                caseToEatRow = "";
+                caseToEatCol = "";
+                draw();
+            }
+            // stopAnimation(currentTile);
+            // currentTile = "";
+            // caseToEatRow = "";
+            // caseToEatCol = "";
+            // switchPlayer();
+            // draw();
+            // console.log("changement de joueur effectuer")
         }
     }
 
@@ -172,7 +246,7 @@ $(document).ready(function () {
         return ((row <= 7 && col <= 7 && row >= 0 && col >= 0) ? true : false);
     }
 
-    function isEatPossible(tileClicked, tileDestination) { //Verifie la configuration du pion sur le plateau afin de savoir si il peut se déplacer manger un pion ou non
+    function eatPossible(tileClicked, tileDestination) { //Verifie la configuration du pion sur le plateau afin de savoir si il peut se déplacer manger un pion ou non
         let eatPossible = false;
 
         let clickedRow = getRow(tileClicked);
@@ -234,10 +308,63 @@ $(document).ready(function () {
         }
     }
 
+    function canHeEat() {
+        var eatPossible = false;
+        for (var row = 0; row < map.length; row++) {
+            for (var col = 0; col < map.length; col++) {
+                if (currentPlayer == PLAYER_ONE && map[row][col] == RED_PAWN) {
+                    if (doesTileExist(row + 2, col + 2) &&
+                        map[row + 2][col + 2] == EMPTY_BLACK_TILE &&
+                        map[row + 1][col + 1] == WHITE_PAWN) {
+                        eatPossible = true;
+                    }
+                    if (doesTileExist(row - 2, col + 2) &&
+                        map[row - 2][col + 2] == EMPTY_BLACK_TILE &&
+                        map[row - 1][col + 1] == WHITE_PAWN) {
+                        eatPossible = true;
+                    }
+                    if (doesTileExist(row + 2, col - 2) &&
+                        map[row + 2][col - 2] == EMPTY_BLACK_TILE &&
+                        map[row + 1][col - 1] == WHITE_PAWN) {
+                        eatPossible = true;
+                    }
+                    if (doesTileExist(row - 2, col - 2) &&
+                        map[row - 2][col - 2] == EMPTY_BLACK_TILE &&
+                        map[row - 1][col - 1] == WHITE_PAWN) {
+                        eatPossible = true;
+                    }
+                }
+                if (currentPlayer == PLAYER_TWO && map[row][col] == WHITE_PAWN) {
+                    if (doesTileExist(row + 2, col + 2) &&
+                        map[row + 2][col + 2] == EMPTY_BLACK_TILE &&
+                        map[row + 1][col + 1] == RED_PAWN) {
+                        eatPossible = true;
+                    }
+                    if (doesTileExist(row - 2, col + 2) &&
+                        map[row - 2][col + 2] == EMPTY_BLACK_TILE &&
+                        map[row - 1][col + 1] == RED_PAWN) {
+                        eatPossible = true;
+                    }
+                    if (doesTileExist(row + 2, col - 2) &&
+                        map[row + 2][col - 2] == EMPTY_BLACK_TILE &&
+                        map[row + 1][col - 1] == RED_PAWN) {
+                        eatPossible = true;
+                    }
+                    if (doesTileExist(row - 2, col - 2) &&
+                        map[row - 2][col - 2] == EMPTY_BLACK_TILE &&
+                        map[row - 1][col - 1] == RED_PAWN) {
+                        eatPossible = true;
+                    }
+                }
+            }
+        }
+        return eatPossible;
+    }
+
     function createMap() { //Crée la map du jeu 
-        for (let row = 0; row < 8; row++) {
+        for (let row = 0; row < map.length; row++) {
             tile[row] = [];
-            for (let col = 0; col < 8; col++) {
+            for (let col = 0; col < map.length; col++) {
                 tile[row][col] = new Tile(row, col); // on fait appel au constructeur Tile
                 if ((row % 2 == 0 && col % 2 == 1) || (row % 2 == 1 && col % 2 == 0)) { //Verifie si on est sur une tile pair ou impair de la map
                     tileDiv = tileDiv + "<div class=\"noir\" id=tile" + row + col + "></div>";
@@ -247,19 +374,19 @@ $(document).ready(function () {
             }
         }
         $("#game").html(tileDiv);
-        for (let row = 0; row < 8; row++) {
-            for (let col = 0; col < 8; col++) {
+        for (let row = 0; row < map.length; row++) {
+            for (let col = 0; col < map.length; col++) {
                 tile[row][col].draw();
 
                 $('#tile' + row + col).click(function () { //Code qui s'execute à chaque clique sur une case de la map
 
                     if (checkPawnANDPlayer(this.id)) {
                         clickedTile(this.id);
-                    } else if (isMovePossible(this.id)) {
+                    } else if (isMovePossible(this.id) && canHeEat() == false) {
                         // console.log("IL PEUT BOUGER");
                         makeMove(this.id);
                     }
-                    else if (isEatPossible(currentTile, this.id)) {
+                    else if (eatPossible(currentTile, this.id) && canHeEat()) {
                         // console.log("IL PEUT MANGER");
                         eatPawn(this.id);
                     }
