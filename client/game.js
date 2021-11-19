@@ -3,7 +3,7 @@ $(document).ready(function () {
         [0, 3, 0, 3, 0, 3, 0, 3], // 0 : tile blanche vide
         [3, 0, 3, 0, 3, 0, 3, 0], // 1 : tile noir vide
         [0, 3, 0, 3, 0, 3, 0, 3], // 2 : pion blanc
-        [1, 0, 1, 0, 1, 0, 1, 0], // 3 : pion rouge
+        [1, 0, 1, 0, 1, 0, 1, 0], // 3 : pion noir
         [0, 1, 0, 1, 0, 1, 0, 1],
         [2, 0, 2, 0, 2, 0, 2, 0],
         [0, 2, 0, 2, 0, 2, 0, 2],
@@ -14,7 +14,7 @@ $(document).ready(function () {
     const EMPTY_BLACK_TILE = 1;
 
     const WHITE_PAWN = 2;
-    const RED_PAWN = 3;
+    const BLACK_PAWN = 3;
 
     let currentPlayer = 1
     const PLAYER_ONE = 1;
@@ -39,8 +39,8 @@ $(document).ready(function () {
                 $("#tile" + this.row + this.col).html("");
             } else if (this.value == WHITE_PAWN) { //On ajoute au sein de la div le svg du pion blanc si la div en contient un
                 $("#tile" + this.row + this.col).html("<svg xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"25\" cy=\"25\" r=\"20\" fill=\"white\" /></svg>");
-            } else if (this.value == RED_PAWN) { //On ajoute au sein de la div le svg du pion rouge si la div en contient un
-                $("#tile" + this.row + this.col).html("<svg xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"25\" cy=\"25\" r=\"20\" fill=\"red\" /></svg>");
+            } else if (this.value == BLACK_PAWN) { //On ajoute au sein de la div le svg du pion noir si la div en contient un
+                $("#tile" + this.row + this.col).html("<svg xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"25\" cy=\"25\" r=\"20\" fill=\"#1c1c1c\" /></svg>");
             }
         }
     }
@@ -58,8 +58,10 @@ $(document).ready(function () {
 
             if (currentTile != "") { //Permet d'enlever l'animation sur la case précédente
                 stopAnimation(currentTile);
+                resetTile();
             }
             currentTile = tile; //Défini la nouvelle case courante 
+            checkPossibilities(tile);
             startAnimation(tile);
             console.log(currentTile);
         }
@@ -78,7 +80,7 @@ $(document).ready(function () {
 
     function showCurrentPlayer() { //Permet d'afficher à l'utilisateur le joueur qui doit actuellement jouer 
         if (currentPlayer == PLAYER_ONE) {
-            $('#currentPlayer').html("<b>Joueur ROUGE</b>")
+            $('#currentPlayer').html("<b>Joueur NOIR</b>")
         } else {
             $('#currentPlayer').html("<b>Joueur BLANC</b>")
         }
@@ -89,8 +91,10 @@ $(document).ready(function () {
         map[getRow(tile)][getCol(tile)] = map[getRow(currentTile)][getCol(currentTile)]; // Place le pion à sa nouvelle position
         map[getRow(currentTile)][getCol(currentTile)] = 1; // Enleve le pion de son ancienne position
         stopAnimation(currentTile);//Enleve l'animation sur la case cliqué après le changement de position
+        $('#' + tile).css('background-color', 'red');
         currentTile = "";
         switchPlayer();
+        resetTile();
         draw();
     }
 
@@ -103,7 +107,7 @@ $(document).ready(function () {
     }
 
     function checkPawnANDPlayer(tile) { //Permet de resteindre le joueur courant à ses pions seulement
-        if (currentPlayer == PLAYER_ONE && (map[getRow(tile)][getCol(tile)] == RED_PAWN)) {
+        if (currentPlayer == PLAYER_ONE && (map[getRow(tile)][getCol(tile)] == BLACK_PAWN)) {
             return true;
         } else if (currentPlayer == PLAYER_TWO && (map[getRow(tile)][getCol(tile)] == WHITE_PAWN)) {
             return true;
@@ -121,10 +125,9 @@ $(document).ready(function () {
 
             if (map[clickedRow][clickedCol] == EMPTY_BLACK_TILE //Verifie qu'on va bien sur une case noir vide
                 && currentPlayer == PLAYER_ONE //check que c'est le joueur 1
-                && map[currentRow][currentCol] == RED_PAWN //check qu'on selectionne un pion rouge 
+                && map[currentRow][currentCol] == BLACK_PAWN //check qu'on selectionne un pion noir 
                 && (clickedRow - currentRow == 1) //Check la différence entre clickedRow(la ligne ou on va) et currentRow(la ligne ou on est) n'est que de 1 car on ne peut pas se déplacer en sautant plusieurs ligne
                 && Math.abs(clickedCol - currentCol) == 1) { //Check similiaire à la ligne MAIS on mets la valeur absolu car dépendamment de notre position le resultat sera de -1 ou 1 en cas de déplcament mais ce qui nous interesse c'est juste la différence de 1 ici
-
                 return true;
             } else if (map[clickedRow][clickedCol] == EMPTY_BLACK_TILE
                 && currentPlayer == PLAYER_TWO
@@ -155,7 +158,7 @@ $(document).ready(function () {
         // console.log("Normalement case vide (1) : " + (map[row - 2][col + 2]))
         // console.log("Normalement pion blanc (2) : " + (map[row - 1][col + 1]))
 
-        if (currentPlayer == PLAYER_ONE && map[row][col] == RED_PAWN) { //Si c'est le joueur 1 et qu'il s'agit d'un pion rouge
+        if (currentPlayer == PLAYER_ONE && map[row][col] == BLACK_PAWN) { //Si c'est le joueur 1 et qu'il s'agit d'un pion noir
             if (doesTileExist(row + 2, col + 2) //En bas à droite
                 && map[row + 2][col + 2] == EMPTY_BLACK_TILE //Verifie que la case d'arrive est bien une case noir vide
                 && map[row + 1][col + 1] == WHITE_PAWN) { //Verifie que la case sur le chemin contient bien un pion blanc
@@ -177,21 +180,21 @@ $(document).ready(function () {
         if (currentPlayer == PLAYER_TWO && map[row][col] == WHITE_PAWN) { // Si il s'agit du joueur 2 et d'un pion blanc
             if (doesTileExist(row + 2, col + 2)
                 && map[row + 2][col + 2] == EMPTY_BLACK_TILE
-                && map[row + 1][col + 1] == RED_PAWN) { //Verifie que la case sur le chemin contient un pion rouge
+                && map[row + 1][col + 1] == BLACK_PAWN) { //Verifie que la case sur le chemin contient un pion noir
                 eatPossible = true;
             } else if (doesTileExist(row - 2, col + 2)
                 && map[row - 2][col + 2] == EMPTY_BLACK_TILE
-                && map[row - 1][col + 1] == RED_PAWN) {
+                && map[row - 1][col + 1] == BLACK_PAWN) {
 
                 eatPossible = true;
             } else if (doesTileExist(row + 2, col - 2)
                 && map[row + 2][col - 2] == EMPTY_BLACK_TILE
-                && map[row + 1][col - 1] == RED_PAWN) {
+                && map[row + 1][col - 1] == BLACK_PAWN) {
 
                 eatPossible = true;
             } else if (doesTileExist(row - 2, col - 2)
                 && map[row - 2][col - 2] == EMPTY_BLACK_TILE
-                && map[row - 1][col - 1] == RED_PAWN) {
+                && map[row - 1][col - 1] == BLACK_PAWN) {
                 eatPossible = true;
             }
         }
@@ -223,6 +226,7 @@ $(document).ready(function () {
                 caseToEatRow = "";
                 caseToEatCol = "";
                 switchPlayer();
+                resetTile();
                 draw();
             } else {
                 isNextJumpPossible = true;
@@ -230,15 +234,9 @@ $(document).ready(function () {
                 startAnimation(currentTile);
                 caseToEatRow = "";
                 caseToEatCol = "";
+                resetTile();
                 draw();
             }
-            // stopAnimation(currentTile);
-            // currentTile = "";
-            // caseToEatRow = "";
-            // caseToEatCol = "";
-            // switchPlayer();
-            // draw();
-            // console.log("changement de joueur effectuer")
         }
     }
 
@@ -257,7 +255,7 @@ $(document).ready(function () {
 
         if (currentTile != "") {
 
-            if (map[clickedRow][clickedCol] == RED_PAWN && currentPlayer == PLAYER_ONE) { //si il s'agit d'un pion rouge et du joueur 1
+            if (map[clickedRow][clickedCol] == BLACK_PAWN && currentPlayer == PLAYER_ONE) { //si il s'agit d'un pion noir et du joueur 1
                 if (doesTileExist(clickedRow + 2, clickedCol + 2) //On verifie que la case en bas à droite existe
                     && map[clickedRow + 2][clickedCol + 2] == EMPTY_BLACK_TILE //Check si la case d'arrivé est bien vide 
                     && clickedRow + 2 == destinationRow && clickedCol + 2 == destinationCol // Check si le mouvement est un mouvement possible au dame (empeche le joueur de se "teleporter" et de faire des mouvements interdit)
@@ -285,22 +283,22 @@ $(document).ready(function () {
                 if (doesTileExist(clickedRow + 2, clickedCol + 2) //En bas à droite
                     && map[clickedRow + 2][clickedCol + 2] == EMPTY_BLACK_TILE
                     && clickedRow + 2 == destinationRow && clickedCol + 2 == destinationCol
-                    && map[clickedRow + 1][clickedCol + 1] == RED_PAWN) {
+                    && map[clickedRow + 1][clickedCol + 1] == BLACK_PAWN) {
                     eatPossible = true;
                 } else if (doesTileExist(clickedRow - 2, clickedCol + 2)
                     && map[clickedRow - 2][clickedCol + 2] == EMPTY_BLACK_TILE //En bas à gauche
                     && clickedRow - 2 == destinationRow && clickedCol + 2 == destinationCol
-                    && map[clickedRow - 1][clickedCol + 1] == RED_PAWN) {
+                    && map[clickedRow - 1][clickedCol + 1] == BLACK_PAWN) {
                     eatPossible = true;
                 } else if (doesTileExist(clickedRow + 2, clickedCol - 2)  //En haut à droite
                     && map[clickedRow + 2][clickedCol - 2] == EMPTY_BLACK_TILE
                     && clickedRow + 2 == destinationRow && clickedCol - 2 == destinationCol
-                    && map[clickedRow + 1][clickedCol - 1] == RED_PAWN) {
+                    && map[clickedRow + 1][clickedCol - 1] == BLACK_PAWN) {
                     eatPossible = true;
                 } else if (doesTileExist(clickedRow - 2, clickedCol - 2) //En haut à gauche
                     && map[clickedRow - 2][clickedCol - 2] == 1
                     && clickedRow - 2 == destinationRow && clickedCol - 2 == destinationCol
-                    && map[clickedRow - 1][clickedCol - 1] == RED_PAWN) {
+                    && map[clickedRow - 1][clickedCol - 1] == BLACK_PAWN) {
                     eatPossible = true;
                 }
             }
@@ -308,11 +306,11 @@ $(document).ready(function () {
         }
     }
 
-    function canHeEat() {
+    function canHeEat() { //Verifie pour chaque pion du plateau si il est en configuration de manger un autre pion
         var eatPossible = false;
         for (var row = 0; row < map.length; row++) {
             for (var col = 0; col < map.length; col++) {
-                if (currentPlayer == PLAYER_ONE && map[row][col] == RED_PAWN) {
+                if (currentPlayer == PLAYER_ONE && map[row][col] == BLACK_PAWN) {
                     if (doesTileExist(row + 2, col + 2) &&
                         map[row + 2][col + 2] == EMPTY_BLACK_TILE &&
                         map[row + 1][col + 1] == WHITE_PAWN) {
@@ -337,28 +335,104 @@ $(document).ready(function () {
                 if (currentPlayer == PLAYER_TWO && map[row][col] == WHITE_PAWN) {
                     if (doesTileExist(row + 2, col + 2) &&
                         map[row + 2][col + 2] == EMPTY_BLACK_TILE &&
-                        map[row + 1][col + 1] == RED_PAWN) {
+                        map[row + 1][col + 1] == BLACK_PAWN) {
                         eatPossible = true;
                     }
                     if (doesTileExist(row - 2, col + 2) &&
                         map[row - 2][col + 2] == EMPTY_BLACK_TILE &&
-                        map[row - 1][col + 1] == RED_PAWN) {
+                        map[row - 1][col + 1] == BLACK_PAWN) {
                         eatPossible = true;
                     }
                     if (doesTileExist(row + 2, col - 2) &&
                         map[row + 2][col - 2] == EMPTY_BLACK_TILE &&
-                        map[row + 1][col - 1] == RED_PAWN) {
+                        map[row + 1][col - 1] == BLACK_PAWN) {
                         eatPossible = true;
                     }
                     if (doesTileExist(row - 2, col - 2) &&
                         map[row - 2][col - 2] == EMPTY_BLACK_TILE &&
-                        map[row - 1][col - 1] == RED_PAWN) {
+                        map[row - 1][col - 1] == BLACK_PAWN) {
                         eatPossible = true;
                     }
                 }
             }
         }
         return eatPossible;
+    }
+
+    function checkPossibilities(tile) { //Affiche au joueur les possibilités de jeu 
+        let possibleDestMoveRow = getRow(tile) + 1;
+        let possibleDestMoveCol = getCol(tile) + 1;
+        let possibleDestMoveRow_1 = getRow(tile) - 1;
+        let possibleDestMoveCol_1 = getCol(tile) - 1;
+
+        let possibleDestEatRow = getRow(tile) + 2;
+        let possibleDestEatCol = getCol(tile) + 2;
+        let possibleDestEatRow_1 = getRow(tile) - 2;
+        let possibleDestEatCol_1 = getCol(tile) - 2;
+
+        if (canHeEat() == false) {
+
+            if (currentPlayer == PLAYER_ONE) {
+
+                if (doesTileExist(possibleDestMoveRow, possibleDestMoveCol) && map[possibleDestMoveRow][possibleDestMoveCol] == EMPTY_BLACK_TILE) {
+                    $('#' + "tile" + possibleDestMoveRow + possibleDestMoveCol).css('background-color', 'green');
+                }
+                if (doesTileExist(possibleDestMoveRow, possibleDestMoveCol_1) && map[possibleDestMoveRow][possibleDestMoveCol_1] == EMPTY_BLACK_TILE) {
+                    $('#' + "tile" + possibleDestMoveRow + possibleDestMoveCol_1).css('background-color', 'green');
+                }
+
+            }
+
+            if (currentPlayer == PLAYER_TWO) {
+                if (doesTileExist(possibleDestMoveRow_1, possibleDestMoveCol_1) && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == EMPTY_BLACK_TILE) {
+                    $('#' + "tile" + possibleDestMoveRow_1 + possibleDestMoveCol_1).css('background-color', 'green');
+                }
+                if (doesTileExist(possibleDestMoveRow_1, possibleDestMoveCol) && map[possibleDestMoveRow_1][possibleDestMoveCol] == EMPTY_BLACK_TILE) {
+                    $('#' + "tile" + possibleDestMoveRow_1 + possibleDestMoveCol).css('background-color', 'green');
+                }
+            }
+        }
+        else if (canHeEat()) {
+            if (currentPlayer == PLAYER_ONE) {
+                if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol]==WHITE_PAWN) {
+                    $('#' + "tile" + possibleDestEatRow + possibleDestEatCol).css('background-color', 'green');
+                }
+                if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol] == WHITE_PAWN) {
+                    $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol).css('background-color', 'green');
+                }
+                if (doesTileExist(possibleDestEatRow, possibleDestEatCol_1) && map[possibleDestEatRow][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol_1] == WHITE_PAWN) {
+                    $('#' + "tile" + possibleDestEatRow + possibleDestEatCol_1).css('background-color', 'green');
+                }
+                if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol_1) && map[possibleDestEatRow_1][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == WHITE_PAWN) {
+                    $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol_1).css('background-color', 'green');
+                }
+            }
+            if (currentPlayer == PLAYER_TWO) {
+                if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol]==BLACK_PAWN) {
+                    $('#' + "tile" + possibleDestEatRow + possibleDestEatCol).css('background-color', 'green');
+                }
+                if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol] == BLACK_PAWN) {
+                    $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol).css('background-color', 'green');
+                }
+                if (doesTileExist(possibleDestEatRow, possibleDestEatCol_1) && map[possibleDestEatRow][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol_1] == BLACK_PAWN) {
+                    $('#' + "tile" + possibleDestEatRow + possibleDestEatCol_1).css('background-color', 'green');
+                }
+                if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol_1) && map[possibleDestEatRow_1][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == BLACK_PAWN) {
+                    $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol_1).css('background-color', 'green');
+                }
+            }
+        }
+    }
+
+    function resetTile() {
+        console.log("NIAM JAI TOUT RESET");
+        for (let row = 0; row < map.length; row++) {
+            for (let col = 0; col < map.length; col++) {
+                if ((row % 2 == 0 && col % 2 == 1) || (row % 2 == 1 && col % 2 == 0)) { //Verifie si on est sur une tile pair ou impair de la map
+                    $('#' + "tile" + row + col).css('background-color', '#846839');
+                }
+            }
+        }
     }
 
     function createMap() { //Crée la map du jeu 
