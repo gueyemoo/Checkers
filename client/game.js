@@ -25,6 +25,7 @@ $(document).ready(function () {
     let currentTile = "";
 
     let isNextJumpPossible = false;
+    let endGame = false;
 
 
     //GAME LOGIQUE 
@@ -96,6 +97,7 @@ $(document).ready(function () {
         switchPlayer();
         resetTile();
         draw();
+        checkWinner();
     }
 
     function draw() { //Dessine chaque case de la map
@@ -228,6 +230,7 @@ $(document).ready(function () {
                 switchPlayer();
                 resetTile();
                 draw();
+                checkWinner();
             } else {
                 isNextJumpPossible = true;
                 currentTile = tile;
@@ -236,6 +239,7 @@ $(document).ready(function () {
                 caseToEatCol = "";
                 resetTile();
                 draw();
+                checkWinner();
             }
         }
     }
@@ -394,7 +398,7 @@ $(document).ready(function () {
         }
         else if (canHeEat()) {
             if (currentPlayer == PLAYER_ONE) {
-                if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol]==WHITE_PAWN) {
+                if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol] == WHITE_PAWN) {
                     $('#' + "tile" + possibleDestEatRow + possibleDestEatCol).css('background-color', 'green');
                 }
                 if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol] == WHITE_PAWN) {
@@ -408,7 +412,7 @@ $(document).ready(function () {
                 }
             }
             if (currentPlayer == PLAYER_TWO) {
-                if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol]==BLACK_PAWN) {
+                if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol] == BLACK_PAWN) {
                     $('#' + "tile" + possibleDestEatRow + possibleDestEatCol).css('background-color', 'green');
                 }
                 if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol] == BLACK_PAWN) {
@@ -424,14 +428,39 @@ $(document).ready(function () {
         }
     }
 
-    function resetTile() {
-        console.log("NIAM JAI TOUT RESET");
+    function resetTile() { //Remets le fond des cases coloré pour indiqué aux joueurs ou il peut jouer à leur couleur initial 
+        // console.log("NIAM JAI TOUT RESET");
         for (let row = 0; row < map.length; row++) {
             for (let col = 0; col < map.length; col++) {
                 if ((row % 2 == 0 && col % 2 == 1) || (row % 2 == 1 && col % 2 == 0)) { //Verifie si on est sur une tile pair ou impair de la map
                     $('#' + "tile" + row + col).css('background-color', '#846839');
                 }
             }
+        }
+    }
+
+    function checkWinner() {
+        let player1PAWN = 0;
+        let player2PAWN = 0;
+        for (var row = 0; row < map.length; row++) {
+            for (var col = 0; col < map.length; col++) {
+                if (map[row][col] == BLACK_PAWN) {
+                    player1PAWN += 1;
+                } else if (map[row][col] == WHITE_PAWN) {
+                    player2PAWN += 2;
+                }
+            }
+        }
+        if (player1PAWN == 0) {
+            console.log("PLAYER 2 is THE WINNER !")
+            $("#winnerInfo").css("display", "inherit");
+            $('#winnerPlayer').html("<b>Joueur BLANC</b>")
+            return endGame = true;
+        } else if (player2PAWN == 0) {
+            $("#winnerInfo").css("display", "inherit");
+            $('#winnerPlayer').html("<b>Joueur NOIR</b>")
+            console.log("PLAYER 1 is THE WINNER !")
+            return endGame = true;
         }
     }
 
@@ -453,18 +482,20 @@ $(document).ready(function () {
                 tile[row][col].draw();
 
                 $('#tile' + row + col).click(function () { //Code qui s'execute à chaque clique sur une case de la map
+                    if (!endGame) {
 
-                    if (checkPawnANDPlayer(this.id)) {
-                        clickedTile(this.id);
-                    } else if (isMovePossible(this.id) && canHeEat() == false) {
-                        // console.log("IL PEUT BOUGER");
-                        makeMove(this.id);
-                    }
-                    else if (eatPossible(currentTile, this.id) && canHeEat()) {
-                        // console.log("IL PEUT MANGER");
-                        eatPawn(this.id);
-                    }
+                        if (checkPawnANDPlayer(this.id)) {
+                            clickedTile(this.id);
+                        } else if (isMovePossible(this.id) && canHeEat() == false) {
+                            // console.log("IL PEUT BOUGER");
+                            makeMove(this.id);
+                        }
+                        else if (eatPossible(currentTile, this.id) && canHeEat()) {
+                            // console.log("IL PEUT MANGER");
+                            eatPawn(this.id);
+                        }
 
+                    }
                 });
             }
         }
