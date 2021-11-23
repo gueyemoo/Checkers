@@ -2,10 +2,10 @@ $(document).ready(function () {
     let map = [
         [0, 3, 0, 3, 0, 3, 0, 3], // 0 : tile blanche vide
         [3, 0, 3, 0, 3, 0, 3, 0], // 1 : tile noir vide
-        [0, 3, 0, 3, 0, 3, 0, 3], // 2 : pion blanc
+        [0, 30, 0, 3, 0, 3, 0, 3], // 2 : pion blanc
         [1, 0, 1, 0, 1, 0, 1, 0], // 3 : pion noir
-        [0, 1, 0, 1, 0, 1, 0, 1],
-        [2, 0, 2, 0, 2, 0, 2, 0],
+        [0, 1, 0, 1, 0, 1, 0, 1], // 20 : dame blanc
+        [2, 0, 2, 0, 20, 0, 2, 0], // 30 : dame noir
         [0, 2, 0, 2, 0, 2, 0, 2],
         [2, 0, 2, 0, 2, 0, 2, 0]
     ];
@@ -15,6 +15,9 @@ $(document).ready(function () {
 
     const WHITE_PAWN = 2;
     const BLACK_PAWN = 3;
+
+    const WHITE_QUEEN_PAWN = 20;
+    const BLACK_QUEEN_PAWN = 30;
 
     let currentPlayer = 1
     const PLAYER_ONE = 1;
@@ -36,12 +39,27 @@ $(document).ready(function () {
 
         this.draw = function () { //Dessine les pions svg
             this.value = map[row][col]; //permet de redessiner la map avec les nouvelles modifcations (si il y en a)
-            if (this.value == 1) {
+            if (isNextJumpPossible == false) {
+                if (this.row == 0 && this.value == WHITE_PAWN) {
+                    this.value = WHITE_QUEEN_PAWN;
+                    gameMap[row][col] = WHITE_QUEEN_PAWN;
+                }
+                if (this.row == 7 && this.value == BLACK_PAWN) {
+                    this.value = BLACK_QUEEN_PAWN;
+                    gameMap[row][col] = BLACK_QUEEN_PAWN;
+                }
+            }
+
+            if (this.value == EMPTY_BLACK_TILE) {
                 $("#tile" + this.row + this.col).html("");
             } else if (this.value == WHITE_PAWN) { //On ajoute au sein de la div le svg du pion blanc si la div en contient un
-                $("#tile" + this.row + this.col).html("<svg xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"25\" cy=\"25\" r=\"20\" fill=\"white\" /></svg>");
+                $("#tile" + this.row + this.col).html("<svg xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"25\" cy=\"25\" r=\"20\" fill=\"#F8F8FF\" /></svg>");
             } else if (this.value == BLACK_PAWN) { //On ajoute au sein de la div le svg du pion noir si la div en contient un
                 $("#tile" + this.row + this.col).html("<svg xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"25\" cy=\"25\" r=\"20\" fill=\"#1c1c1c\" /></svg>");
+            } else if (this.value == WHITE_QUEEN_PAWN) {
+                $("#tile" + this.row + this.col).html("<svg xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"25\" cy=\"25\" r=\"20\" fill=\"#F8F8FF\" /></svg><img src=\"queen.svg\" class=\"queen\">");
+            } else if (this.value == BLACK_QUEEN_PAWN) {
+                $("#tile" + this.row + this.col).html("<svg xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"25\" cy=\"25\" r=\"20\" fill=\"#1c1c1c\" /></svg><img src=\"queen.svg\" class=\"queen\">");
             }
         }
     }
@@ -92,7 +110,7 @@ $(document).ready(function () {
         map[getRow(tile)][getCol(tile)] = map[getRow(currentTile)][getCol(currentTile)]; // Place le pion à sa nouvelle position
         map[getRow(currentTile)][getCol(currentTile)] = 1; // Enleve le pion de son ancienne position
         stopAnimation(currentTile);//Enleve l'animation sur la case cliqué après le changement de position
-        $('#' + tile).css('background-color', 'red');
+        // $('#' + tile).css('background-color', 'red');
         currentTile = "";
         switchPlayer();
         resetTile();
@@ -109,9 +127,9 @@ $(document).ready(function () {
     }
 
     function checkPawnANDPlayer(tile) { //Permet de resteindre le joueur courant à ses pions seulement
-        if (currentPlayer == PLAYER_ONE && (map[getRow(tile)][getCol(tile)] == BLACK_PAWN)) {
+        if (currentPlayer == PLAYER_ONE && (map[getRow(tile)][getCol(tile)] == BLACK_PAWN || map[getRow(tile)][getCol(tile)] == BLACK_QUEEN_PAWN)) {
             return true;
-        } else if (currentPlayer == PLAYER_TWO && (map[getRow(tile)][getCol(tile)] == WHITE_PAWN)) {
+        } else if (currentPlayer == PLAYER_TWO && (map[getRow(tile)][getCol(tile)] == WHITE_PAWN || map[getRow(tile)][getCol(tile)] == WHITE_QUEEN_PAWN)) {
             return true;
         }
     }
@@ -123,11 +141,14 @@ $(document).ready(function () {
         let clickedRow = getRow(tile);
         let clickedCol = getCol(tile);
 
+        // console.log("1er valeur col: " + Math.abs(clickedCol - currentCol));
+        // console.log("2eme valeur row: " + Math.abs(clickedRow - currentRow));
+        // console.log((Math.abs(clickedCol - currentCol) == Math.abs(clickedRow - currentRow)))
         if (currentTile != "") {
 
             if (map[clickedRow][clickedCol] == EMPTY_BLACK_TILE //Verifie qu'on va bien sur une case noir vide
                 && currentPlayer == PLAYER_ONE //check que c'est le joueur 1
-                && map[currentRow][currentCol] == BLACK_PAWN //check qu'on selectionne un pion noir 
+                && map[currentRow][currentCol] == BLACK_PAWN  //check qu'on selectionne un pion noir ou une dame noir
                 && (clickedRow - currentRow == 1) //Check la différence entre clickedRow(la ligne ou on va) et currentRow(la ligne ou on est) n'est que de 1 car on ne peut pas se déplacer en sautant plusieurs ligne
                 && Math.abs(clickedCol - currentCol) == 1) { //Check similiaire à la ligne MAIS on mets la valeur absolu car dépendamment de notre position le resultat sera de -1 ou 1 en cas de déplcament mais ce qui nous interesse c'est juste la différence de 1 ici
                 return true;
@@ -136,6 +157,18 @@ $(document).ready(function () {
                 && map[currentRow][currentCol] == WHITE_PAWN
                 && (clickedRow - currentRow == -1) //-1 car le pion remonte
                 && Math.abs(clickedCol - currentCol) == 1) {
+                return true;
+            } else if (map[clickedRow][clickedCol] == EMPTY_BLACK_TILE
+                && currentPlayer == PLAYER_TWO
+                && map[currentRow][currentCol] == WHITE_QUEEN_PAWN
+                && (Math.abs(clickedCol - currentCol) == Math.abs(clickedRow - currentRow))) //Permet tout les mouvements sur la diagonale tant que la case est vide (pour une dame blanche)
+            {
+                return true;
+            } else if (map[clickedRow][clickedCol] == EMPTY_BLACK_TILE
+                && currentPlayer == PLAYER_ONE
+                && map[currentRow][currentCol] == BLACK_QUEEN_PAWN
+                && (Math.abs(clickedCol - currentCol) == Math.abs(clickedRow - currentRow))) //Permet tout les mouvements sur la diagonale tant que la case est vide (pour une dame noir)
+            {
                 return true;
             }
         }
@@ -160,43 +193,51 @@ $(document).ready(function () {
         // console.log("Normalement case vide (1) : " + (map[row - 2][col + 2]))
         // console.log("Normalement pion blanc (2) : " + (map[row - 1][col + 1]))
 
-        if (currentPlayer == PLAYER_ONE && map[row][col] == BLACK_PAWN) { //Si c'est le joueur 1 et qu'il s'agit d'un pion noir
+        if (currentPlayer == PLAYER_ONE && (map[row][col] == BLACK_PAWN || map[row][col] == BLACK_QUEEN_PAWN)) { //Si c'est le joueur 1 et qu'il s'agit d'un pion noir ou d'une dame noir
             if (doesTileExist(row + 2, col + 2) //En bas à droite
                 && map[row + 2][col + 2] == EMPTY_BLACK_TILE //Verifie que la case d'arrive est bien une case noir vide
-                && map[row + 1][col + 1] == WHITE_PAWN) { //Verifie que la case sur le chemin contient bien un pion blanc
+                && (map[row + 1][col + 1] == WHITE_PAWN
+                    || map[row + 1][col + 1] == WHITE_QUEEN_PAWN)) { //Verifie que la case sur le chemin contient bien un pion blanc
                 eatPossible = true;
             } else if (doesTileExist(row - 2, col + 2) //En bas à gauche
                 && map[row - 2][col + 2] == EMPTY_BLACK_TILE
-                && map[row - 1][col + 1] == WHITE_PAWN) {
+                && (map[row - 1][col + 1] == WHITE_PAWN
+                    || map[row - 1][col + 1] == WHITE_QUEEN_PAWN)) {
                 eatPossible = true;
             } else if (doesTileExist(row + 2, col - 2) //En haut à droite
                 && map[row + 2][col - 2] == EMPTY_BLACK_TILE
-                && map[row + 1][col - 1] == WHITE_PAWN) {
+                && (map[row + 1][col - 1] == WHITE_PAWN
+                    || map[row + 1][col - 1] == WHITE_QUEEN_PAWN)) {
                 eatPossible = true;
             } else if (doesTileExist(row - 2, col - 2) //En haut à gauche
                 && map[row - 2][col - 2] == EMPTY_BLACK_TILE
-                && map[row - 1][col - 1] == WHITE_PAWN) {
+                && (map[row - 1][col - 1] == WHITE_PAWN
+                    || map[row - 1][col - 1] == WHITE_QUEEN_PAWN)) {
                 eatPossible = true;
             }
         }
-        if (currentPlayer == PLAYER_TWO && map[row][col] == WHITE_PAWN) { // Si il s'agit du joueur 2 et d'un pion blanc
+        if (currentPlayer == PLAYER_TWO && (map[row][col] == WHITE_PAWN || map[row][col] == WHITE_QUEEN_PAWN)) { // Si il s'agit du joueur 2 et d'un pion blanc ou d'une dame noir
             if (doesTileExist(row + 2, col + 2)
                 && map[row + 2][col + 2] == EMPTY_BLACK_TILE
-                && map[row + 1][col + 1] == BLACK_PAWN) { //Verifie que la case sur le chemin contient un pion noir
+                && (map[row + 1][col + 1] == BLACK_PAWN
+                    || map[row + 1][col + 1] == BLACK_QUEEN_PAWN)) { //Verifie que la case sur le chemin contient un pion noir
                 eatPossible = true;
             } else if (doesTileExist(row - 2, col + 2)
                 && map[row - 2][col + 2] == EMPTY_BLACK_TILE
-                && map[row - 1][col + 1] == BLACK_PAWN) {
+                && (map[row - 1][col + 1] == BLACK_PAWN
+                    || map[row - 1][col + 1] == BLACK_QUEEN_PAWN)) {
 
                 eatPossible = true;
             } else if (doesTileExist(row + 2, col - 2)
                 && map[row + 2][col - 2] == EMPTY_BLACK_TILE
-                && map[row + 1][col - 1] == BLACK_PAWN) {
+                && (map[row + 1][col - 1] == BLACK_PAWN
+                    || map[row + 1][col - 1] == BLACK_QUEEN_PAWN)) {
 
                 eatPossible = true;
             } else if (doesTileExist(row - 2, col - 2)
                 && map[row - 2][col - 2] == EMPTY_BLACK_TILE
-                && map[row - 1][col - 1] == BLACK_PAWN) {
+                && (map[row - 1][col - 1] == BLACK_PAWN
+                    || map[row - 1][col - 1] == BLACK_QUEEN_PAWN)) {
                 eatPossible = true;
             }
         }
@@ -259,50 +300,50 @@ $(document).ready(function () {
 
         if (currentTile != "") {
 
-            if (map[clickedRow][clickedCol] == BLACK_PAWN && currentPlayer == PLAYER_ONE) { //si il s'agit d'un pion noir et du joueur 1
+            if ((map[clickedRow][clickedCol] == BLACK_PAWN || map[clickedRow][clickedCol] == BLACK_QUEEN_PAWN) && currentPlayer == PLAYER_ONE) { //si il s'agit d'un pion noir ou d'une dame noir et du joueur 1
                 if (doesTileExist(clickedRow + 2, clickedCol + 2) //On verifie que la case en bas à droite existe
                     && map[clickedRow + 2][clickedCol + 2] == EMPTY_BLACK_TILE //Check si la case d'arrivé est bien vide 
                     && clickedRow + 2 == destinationRow && clickedCol + 2 == destinationCol // Check si le mouvement est un mouvement possible au dame (empeche le joueur de se "teleporter" et de faire des mouvements interdit)
-                    && map[clickedRow + 1][clickedCol + 1] == WHITE_PAWN) //Check si le pion entre le départ et l'arrivé est bien un pion blanc
+                    && (map[clickedRow + 1][clickedCol + 1] == WHITE_PAWN || map[clickedRow + 1][clickedCol + 1] == WHITE_QUEEN_PAWN)) //Check si le pion entre le départ et l'arrivé est bien un pion blanc ou une dame blanche
                 {
                     eatPossible = true;
                 } else if (doesTileExist(clickedRow - 2, clickedCol + 2)
                     && map[clickedRow - 2][clickedCol + 2] == EMPTY_BLACK_TILE //En bas à gauche
                     && clickedRow - 2 == destinationRow && clickedCol + 2 == destinationCol
-                    && map[clickedRow - 1][clickedCol + 1] == WHITE_PAWN) {
+                    && (map[clickedRow - 1][clickedCol + 1] == WHITE_PAWN || map[clickedRow - 1][clickedCol + 1] == WHITE_QUEEN_PAWN)) {
                     eatPossible = true;
                 } else if (doesTileExist(clickedRow + 2, clickedCol - 2)  //En haut à droite
                     && map[clickedRow + 2][clickedCol - 2] == EMPTY_BLACK_TILE
                     && clickedRow + 2 == destinationRow && clickedCol - 2 == destinationCol
-                    && map[clickedRow + 1][clickedCol - 1] == WHITE_PAWN) {
+                    && (map[clickedRow + 1][clickedCol - 1] == WHITE_PAWN || map[clickedRow + 1][clickedCol - 1] == WHITE_QUEEN_PAWN)) {
                     eatPossible = true;
                 } else if (doesTileExist(clickedRow - 2, clickedCol - 2) //En haut à gauche
                     && map[clickedRow - 2][clickedCol - 2] == 1
                     && clickedRow - 2 == destinationRow && clickedCol - 2 == destinationCol
-                    && map[clickedRow - 1][clickedCol - 1] == WHITE_PAWN) {
+                    && (map[clickedRow - 1][clickedCol - 1] == WHITE_PAWN || map[clickedRow - 1][clickedCol - 1] == WHITE_QUEEN_PAWN)) {
                     eatPossible = true;
                 }
             }
-            if (map[clickedRow][clickedCol] == WHITE_PAWN && currentPlayer == PLAYER_TWO) { //si il s'agit d'un pion blanc et du joueur 2
+            if ((map[clickedRow][clickedCol] == WHITE_PAWN || map[clickedRow][clickedCol] == WHITE_QUEEN_PAWN) && currentPlayer == PLAYER_TWO) { //si il s'agit d'un pion blanc ou d'une dame blanc et du joueur 2
                 if (doesTileExist(clickedRow + 2, clickedCol + 2) //En bas à droite
                     && map[clickedRow + 2][clickedCol + 2] == EMPTY_BLACK_TILE
                     && clickedRow + 2 == destinationRow && clickedCol + 2 == destinationCol
-                    && map[clickedRow + 1][clickedCol + 1] == BLACK_PAWN) {
+                    && (map[clickedRow + 1][clickedCol + 1] == BLACK_PAWN || map[clickedRow + 1][clickedCol + 1] == BLACK_QUEEN_PAWN)) {
                     eatPossible = true;
                 } else if (doesTileExist(clickedRow - 2, clickedCol + 2)
                     && map[clickedRow - 2][clickedCol + 2] == EMPTY_BLACK_TILE //En bas à gauche
                     && clickedRow - 2 == destinationRow && clickedCol + 2 == destinationCol
-                    && map[clickedRow - 1][clickedCol + 1] == BLACK_PAWN) {
+                    && (map[clickedRow - 1][clickedCol + 1] == BLACK_PAWN || map[clickedRow - 1][clickedCol + 1] == BLACK_QUEEN_PAWN)) {
                     eatPossible = true;
                 } else if (doesTileExist(clickedRow + 2, clickedCol - 2)  //En haut à droite
                     && map[clickedRow + 2][clickedCol - 2] == EMPTY_BLACK_TILE
                     && clickedRow + 2 == destinationRow && clickedCol - 2 == destinationCol
-                    && map[clickedRow + 1][clickedCol - 1] == BLACK_PAWN) {
+                    && (map[clickedRow + 1][clickedCol - 1] == BLACK_PAWN || map[clickedRow + 1][clickedCol - 1] == BLACK_QUEEN_PAWN)) {
                     eatPossible = true;
                 } else if (doesTileExist(clickedRow - 2, clickedCol - 2) //En haut à gauche
                     && map[clickedRow - 2][clickedCol - 2] == 1
                     && clickedRow - 2 == destinationRow && clickedCol - 2 == destinationCol
-                    && map[clickedRow - 1][clickedCol - 1] == BLACK_PAWN) {
+                    && (map[clickedRow - 1][clickedCol - 1] == BLACK_PAWN || map[clickedRow - 1][clickedCol - 1] == BLACK_QUEEN_PAWN)) {
                     eatPossible = true;
                 }
             }
@@ -314,47 +355,47 @@ $(document).ready(function () {
         var eatPossible = false;
         for (var row = 0; row < map.length; row++) {
             for (var col = 0; col < map.length; col++) {
-                if (currentPlayer == PLAYER_ONE && map[row][col] == BLACK_PAWN) {
+                if (currentPlayer == PLAYER_ONE && (map[row][col] == BLACK_PAWN || map[row][col] == BLACK_QUEEN_PAWN)) {
                     if (doesTileExist(row + 2, col + 2) &&
                         map[row + 2][col + 2] == EMPTY_BLACK_TILE &&
-                        map[row + 1][col + 1] == WHITE_PAWN) {
+                        (map[row + 1][col + 1] == WHITE_PAWN || map[row + 1][col + 1] == WHITE_QUEEN_PAWN)) {
                         eatPossible = true;
                     }
                     if (doesTileExist(row - 2, col + 2) &&
                         map[row - 2][col + 2] == EMPTY_BLACK_TILE &&
-                        map[row - 1][col + 1] == WHITE_PAWN) {
+                        (map[row - 1][col + 1] == WHITE_PAWN || map[row - 1][col + 1] == WHITE_QUEEN_PAWN)) {
                         eatPossible = true;
                     }
                     if (doesTileExist(row + 2, col - 2) &&
                         map[row + 2][col - 2] == EMPTY_BLACK_TILE &&
-                        map[row + 1][col - 1] == WHITE_PAWN) {
+                        (map[row + 1][col - 1] == WHITE_PAWN || map[row + 1][col - 1] == WHITE_QUEEN_PAWN)) {
                         eatPossible = true;
                     }
                     if (doesTileExist(row - 2, col - 2) &&
                         map[row - 2][col - 2] == EMPTY_BLACK_TILE &&
-                        map[row - 1][col - 1] == WHITE_PAWN) {
+                        (map[row - 1][col - 1] == WHITE_PAWN || map[row - 1][col - 1] == WHITE_QUEEN_PAWN)) {
                         eatPossible = true;
                     }
                 }
-                if (currentPlayer == PLAYER_TWO && map[row][col] == WHITE_PAWN) {
+                if (currentPlayer == PLAYER_TWO && (map[row][col] == WHITE_PAWN || map[row][col] == WHITE_QUEEN_PAWN)) {
                     if (doesTileExist(row + 2, col + 2) &&
                         map[row + 2][col + 2] == EMPTY_BLACK_TILE &&
-                        map[row + 1][col + 1] == BLACK_PAWN) {
+                        (map[row + 1][col + 1] == BLACK_PAWN || map[row + 1][col + 1] == BLACK_QUEEN_PAWN)) {
                         eatPossible = true;
                     }
                     if (doesTileExist(row - 2, col + 2) &&
                         map[row - 2][col + 2] == EMPTY_BLACK_TILE &&
-                        map[row - 1][col + 1] == BLACK_PAWN) {
+                        (map[row - 1][col + 1] == BLACK_PAWN || map[row - 1][col + 1] == BLACK_QUEEN_PAWN)) {
                         eatPossible = true;
                     }
                     if (doesTileExist(row + 2, col - 2) &&
                         map[row + 2][col - 2] == EMPTY_BLACK_TILE &&
-                        map[row + 1][col - 1] == BLACK_PAWN) {
+                        (map[row + 1][col - 1] == BLACK_PAWN || map[row + 1][col - 1] == BLACK_QUEEN_PAWN)) {
                         eatPossible = true;
                     }
                     if (doesTileExist(row - 2, col - 2) &&
                         map[row - 2][col - 2] == EMPTY_BLACK_TILE &&
-                        map[row - 1][col - 1] == BLACK_PAWN) {
+                        (map[row - 1][col - 1] == BLACK_PAWN || map[row - 1][col - 1] == BLACK_QUEEN_PAWN)) {
                         eatPossible = true;
                     }
                 }
@@ -429,7 +470,6 @@ $(document).ready(function () {
     }
 
     function resetTile() { //Remets le fond des cases coloré pour indiqué aux joueurs ou il peut jouer à leur couleur initial 
-        // console.log("NIAM JAI TOUT RESET");
         for (let row = 0; row < map.length; row++) {
             for (let col = 0; col < map.length; col++) {
                 if ((row % 2 == 0 && col % 2 == 1) || (row % 2 == 1 && col % 2 == 0)) { //Verifie si on est sur une tile pair ou impair de la map
