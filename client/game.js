@@ -42,11 +42,11 @@ $(document).ready(function () {
             if (isNextJumpPossible == false) {
                 if (this.row == 0 && this.value == WHITE_PAWN) {
                     this.value = WHITE_QUEEN_PAWN;
-                    gameMap[row][col] = WHITE_QUEEN_PAWN;
+                    map[row][col] = WHITE_QUEEN_PAWN;
                 }
                 if (this.row == 7 && this.value == BLACK_PAWN) {
                     this.value = BLACK_QUEEN_PAWN;
-                    gameMap[row][col] = BLACK_QUEEN_PAWN;
+                    map[row][col] = BLACK_QUEEN_PAWN;
                 }
             }
 
