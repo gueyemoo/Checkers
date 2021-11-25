@@ -11,12 +11,12 @@ $(document).ready(function () {
     // ];
     let map = [
         [0, 1, 0, 1, 0, 1, 0, 1], // 0 : tile blanche vide
-        [1, 0, 1, 0, 2, 0, 1, 0], // 1 : tile noir vide
-        [0, 1, 0, 1, 0, 1, 0, 1], // 2 : pion blanc
-        [1, 0, 1, 0, 1, 0, 1, 0], // 3 : pion noir
+        [1, 0, 1, 0, 20, 0, 1, 0], // 1 : tile noir vide
+        [0, 20, 0, 1, 0, 1, 0, 1], // 2 : pion blanc
+        [1, 0, 2, 0, 3, 0, 1, 0], // 3 : pion noir
         [0, 1, 0, 1, 0, 1, 0, 1], // 20 : dame blanc
         [1, 0, 1, 0, 1, 0, 1, 0], // 30 : dame noir
-        [0, 3, 0, 1, 0, 1, 0, 1],
+        [0, 30, 0, 30, 0, 30, 0, 1],
         [1, 0, 1, 0, 1, 0, 1, 0]
     ];
 
@@ -414,6 +414,9 @@ $(document).ready(function () {
         return eatPossible;
     }
 
+    function isPair(value) { if (value % 2 == 0) return true; else return false; } //retourne vrai si la variable est pair sinon false
+
+
     function checkPossibilities(tile) { //Affiche au joueur les possibilités de jeu 
         let possibleDestMoveRow = getRow(tile) + 1;
         let possibleDestMoveCol = getCol(tile) + 1;
@@ -425,10 +428,11 @@ $(document).ready(function () {
         let possibleDestEatRow_1 = getRow(tile) - 2;
         let possibleDestEatCol_1 = getCol(tile) - 2;
 
+        let currentRow = getRow(currentTile);
+        let currentCol = getCol(currentTile);
+
         if (canHeEat() == false) {
-
-            if (currentPlayer == PLAYER_ONE) {
-
+            if (currentPlayer == PLAYER_ONE && map[currentRow][currentCol] == BLACK_PAWN) {
                 if (doesTileExist(possibleDestMoveRow, possibleDestMoveCol) && map[possibleDestMoveRow][possibleDestMoveCol] == EMPTY_BLACK_TILE) {
                     $('#' + "tile" + possibleDestMoveRow + possibleDestMoveCol).css('background-color', 'green');
                 }
@@ -437,119 +441,229 @@ $(document).ready(function () {
                 }
 
             }
-
-            if (currentPlayer == PLAYER_TWO) {
-                if (doesTileExist(possibleDestMoveRow_1, possibleDestMoveCol_1) && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == EMPTY_BLACK_TILE) {
-                    $('#' + "tile" + possibleDestMoveRow_1 + possibleDestMoveCol_1).css('background-color', 'green');
-                }
-                if (doesTileExist(possibleDestMoveRow_1, possibleDestMoveCol) && map[possibleDestMoveRow_1][possibleDestMoveCol] == EMPTY_BLACK_TILE) {
-                    $('#' + "tile" + possibleDestMoveRow_1 + possibleDestMoveCol).css('background-color', 'green');
-                }
-            }
-        }
-        else if (canHeEat()) {
-            if (currentPlayer == PLAYER_ONE) {
-                if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol] == WHITE_PAWN) {
-                    $('#' + "tile" + possibleDestEatRow + possibleDestEatCol).css('background-color', 'green');
-                }
-                if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol] == WHITE_PAWN) {
-                    $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol).css('background-color', 'green');
-                }
-                if (doesTileExist(possibleDestEatRow, possibleDestEatCol_1) && map[possibleDestEatRow][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol_1] == WHITE_PAWN) {
-                    $('#' + "tile" + possibleDestEatRow + possibleDestEatCol_1).css('background-color', 'green');
-                }
-                if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol_1) && map[possibleDestEatRow_1][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == WHITE_PAWN) {
-                    $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol_1).css('background-color', 'green');
-                }
-            }
-            if (currentPlayer == PLAYER_TWO) {
-                if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol] == BLACK_PAWN) {
-                    $('#' + "tile" + possibleDestEatRow + possibleDestEatCol).css('background-color', 'green');
-                }
-                if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol] == BLACK_PAWN) {
-                    $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol).css('background-color', 'green');
-                }
-                if (doesTileExist(possibleDestEatRow, possibleDestEatCol_1) && map[possibleDestEatRow][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol_1] == BLACK_PAWN) {
-                    $('#' + "tile" + possibleDestEatRow + possibleDestEatCol_1).css('background-color', 'green');
-                }
-                if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol_1) && map[possibleDestEatRow_1][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == BLACK_PAWN) {
-                    $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol_1).css('background-color', 'green');
-                }
-            }
-        }
-    }
-
-    function resetTile() { //Remets le fond des cases coloré pour indiqué aux joueurs ou il peut jouer à leur couleur initial 
-        for (let row = 0; row < map.length; row++) {
-            for (let col = 0; col < map.length; col++) {
-                if ((row % 2 == 0 && col % 2 == 1) || (row % 2 == 1 && col % 2 == 0)) { //Verifie si on est sur une tile pair ou impair de la map
-                    $('#' + "tile" + row + col).css('background-color', '#846839');
-                }
-            }
-        }
-    }
-
-    function checkWinner() {
-        let player1PAWN = 0;
-        let player2PAWN = 0;
-        for (var row = 0; row < map.length; row++) {
-            for (var col = 0; col < map.length; col++) {
-                if (map[row][col] == BLACK_PAWN) {
-                    player1PAWN += 1;
-                } else if (map[row][col] == WHITE_PAWN) {
-                    player2PAWN += 2;
-                }
-            }
-        }
-        if (player1PAWN == 0) {
-            console.log("PLAYER 2 is THE WINNER !")
-            $("#winnerInfo").css("display", "inherit");
-            $('#winnerPlayer').html("<b>Joueur BLANC</b>")
-            return endGame = true;
-        } else if (player2PAWN == 0) {
-            $("#winnerInfo").css("display", "inherit");
-            $('#winnerPlayer').html("<b>Joueur NOIR</b>")
-            console.log("PLAYER 1 is THE WINNER !")
-            return endGame = true;
-        }
-    }
-
-    function createMap() { //Crée la map du jeu 
-        for (let row = 0; row < map.length; row++) {
-            tile[row] = [];
-            for (let col = 0; col < map.length; col++) {
-                tile[row][col] = new Tile(row, col); // on fait appel au constructeur Tile
-                if ((row % 2 == 0 && col % 2 == 1) || (row % 2 == 1 && col % 2 == 0)) { //Verifie si on est sur une tile pair ou impair de la map
-                    tileDiv = tileDiv + "<div class=\"noir\" id=tile" + row + col + "></div>";
-                } else {
-                    tileDiv = tileDiv + "<div class=\"blanc\" id=tile" + row + col + "></div>";
-                } //On ajoute pour chaque tile un id qui défini la row et la col ex:(id="tile00", pour la tile à la row 0 et la col 0)
-            }
-        }
-        $("#game").html(tileDiv);
-        for (let row = 0; row < map.length; row++) {
-            for (let col = 0; col < map.length; col++) {
-                tile[row][col].draw();
-
-                $('#tile' + row + col).click(function () { //Code qui s'execute à chaque clique sur une case de la map
-                    if (!endGame) {
-
-                        if (checkPawnANDPlayer(this.id)) {
-                            clickedTile(this.id);
-                        } else if (isMovePossible(this.id) && canHeEat() == false) {
-                            // console.log("IL PEUT BOUGER");
-                            makeMove(this.id);
+                //gestion des mouvements normaux possible pour les dames noir et blanche
+            if (currentPlayer == PLAYER_ONE && map[currentRow][currentCol] == BLACK_QUEEN_PAWN) { //vers le bas à droite des dames noir
+                for (let i = 0; i < map.length; i++) {
+                    let destinationRow = currentRow+i;
+                    let destinationCol = currentCol+i;
+                    if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == EMPTY_BLACK_TILE) {
+                        if (Math.abs(destinationRow - currentRow) == Math.abs(destinationCol - currentCol)) {
+                            $('#' + 'tile' + destinationRow + destinationCol).css('background-color', 'green');
                         }
-                        else if (eatPossible(currentTile, this.id) && canHeEat()) {
-                            // console.log("IL PEUT MANGER");
-                            eatPawn(this.id);
-                        }
-
+                    } else if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == BLACK_PAWN){
+                        break;
                     }
-                });
+                }
+            }
+
+            if (currentPlayer == PLAYER_ONE && map[currentRow][currentCol] == BLACK_QUEEN_PAWN) { //vers le haut à droite des dames noir
+                for (let i = 0; i < map.length; i++) {
+                    let destinationRow = currentRow-i;
+                    let destinationCol = currentCol+i;
+                    if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == EMPTY_BLACK_TILE) {
+                        if (Math.abs(destinationRow - currentRow) == Math.abs(destinationCol - currentCol)) {
+                            console.log("we in");
+                            $('#' + 'tile' + destinationRow + destinationCol).css('background-color', 'green');
+                        }
+                    } else if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == BLACK_PAWN) {
+                        break;
+                    }
+                }
+            }
+            if (currentPlayer == PLAYER_ONE && map[currentRow][currentCol] == BLACK_QUEEN_PAWN) { //vers le bas à gauche des dames noir
+                for (let i = 0; i < map.length; i++) {
+                    let destinationRow = currentRow+i;
+                    let destinationCol = currentCol-i;
+                    if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == EMPTY_BLACK_TILE) {
+                        if (Math.abs(destinationRow - currentRow) == Math.abs(destinationCol - currentCol)) {
+                            console.log("we in");
+                            $('#' + 'tile' + destinationRow + destinationCol).css('background-color', 'green');
+                        }
+                    } else if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == BLACK_PAWN) {
+                        break;
+                    }
+                }
+            }
+            if (currentPlayer == PLAYER_ONE && map[currentRow][currentCol] == BLACK_QUEEN_PAWN) { //vers le haut à gauche des dames noir
+                for (let i = 0; i < map.length; i++) {
+                    let destinationRow = currentRow-i;
+                    let destinationCol = currentCol-i;
+                    if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == EMPTY_BLACK_TILE) {
+                        if (Math.abs(destinationRow - currentRow) == Math.abs(destinationCol - currentCol)) {
+                            console.log("we in");
+                            $('#' + 'tile' + destinationRow + destinationCol).css('background-color', 'green');
+                        }
+                    } else if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == BLACK_PAWN) {
+                        break;
+                    }
+                }
+            }
+            if (currentPlayer == PLAYER_TWO && map[currentRow][currentCol] == WHITE_QUEEN_PAWN) { //vers le bas à droite des dames blanche
+                for (let i = 0; i < map.length; i++) {
+                    let destinationRow = currentRow+i;
+                    let destinationCol = currentCol+i;
+                    if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == EMPTY_BLACK_TILE) {
+                        if (Math.abs(destinationRow - currentRow) == Math.abs(destinationCol - currentCol)) {
+                            $('#' + 'tile' + destinationRow + destinationCol).css('background-color', 'green');
+                        }
+                    } else if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == WHITE_PAWN){
+                        break;
+                    }
+                }
+            }
+
+            if (currentPlayer == PLAYER_TWO && map[currentRow][currentCol] == WHITE_QUEEN_PAWN) { //vers le haut à droite des dames blanche
+                for (let i = 0; i < map.length; i++) {
+                    let destinationRow = currentRow-i;
+                    let destinationCol = currentCol+i;
+                    if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == EMPTY_BLACK_TILE) {
+                        if (Math.abs(destinationRow - currentRow) == Math.abs(destinationCol - currentCol)) {
+                            $('#' + 'tile' + destinationRow + destinationCol).css('background-color', 'green');
+                        }
+                    } else if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == WHITE_PAWN) {
+                        break;
+                    }
+                }
+            }
+            if (currentPlayer == PLAYER_TWO && map[currentRow][currentCol] == WHITE_QUEEN_PAWN) { //vers le bas à gauche des dames blanche
+                for (let i = 0; i < map.length; i++) {
+                    let destinationRow = currentRow+i;
+                    let destinationCol = currentCol-i;
+                    if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == EMPTY_BLACK_TILE) {
+                        if (Math.abs(destinationRow - currentRow) == Math.abs(destinationCol - currentCol)) {
+                            $('#' + 'tile' + destinationRow + destinationCol).css('background-color', 'green');
+                        }
+                    } else if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == WHITE_PAWN) {
+                        break;
+                    }
+                }
+            }
+            if (currentPlayer == PLAYER_TWO && map[currentRow][currentCol] == WHITE_QUEEN_PAWN) { //vers le haut à gauche des dames blanche
+                for (let i = 0; i < map.length; i++) {
+                    let destinationRow = currentRow-i;
+                    let destinationCol = currentCol-i;
+                    if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == EMPTY_BLACK_TILE) {
+                        if (Math.abs(destinationRow - currentRow) == Math.abs(destinationCol - currentCol)) {
+                            $('#' + 'tile' + destinationRow + destinationCol).css('background-color', 'green');
+                        }
+                    } else if (doesTileExist(destinationRow, destinationCol) && map[destinationRow][destinationCol] == WHITE_PAWN) {
+                        break;
+                    }
+                }
+            }
+
+                if (currentPlayer == PLAYER_TWO && map[currentRow][currentCol] == WHITE_PAWN) {
+                    if (doesTileExist(possibleDestMoveRow_1, possibleDestMoveCol_1) && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == EMPTY_BLACK_TILE) {
+                        $('#' + "tile" + possibleDestMoveRow_1 + possibleDestMoveCol_1).css('background-color', 'green');
+                    }
+                    if (doesTileExist(possibleDestMoveRow_1, possibleDestMoveCol) && map[possibleDestMoveRow_1][possibleDestMoveCol] == EMPTY_BLACK_TILE) {
+                        $('#' + "tile" + possibleDestMoveRow_1 + possibleDestMoveCol).css('background-color', 'green');
+                    }
+                }
+            }
+            else if (canHeEat()) { //concercne les pions normaux et les dames
+                if (currentPlayer == PLAYER_ONE) {
+                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol] == WHITE_PAWN) {
+                        $('#' + "tile" + possibleDestEatRow + possibleDestEatCol).css('background-color', 'green');
+                    }
+                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol] == WHITE_PAWN) {
+                        $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol).css('background-color', 'green');
+                    }
+                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol_1) && map[possibleDestEatRow][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol_1] == WHITE_PAWN) {
+                        $('#' + "tile" + possibleDestEatRow + possibleDestEatCol_1).css('background-color', 'green');
+                    }
+                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol_1) && map[possibleDestEatRow_1][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == WHITE_PAWN) {
+                        $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol_1).css('background-color', 'green');
+                    }
+                }
+                if (currentPlayer == PLAYER_TWO) {
+                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol] == BLACK_PAWN) {
+                        $('#' + "tile" + possibleDestEatRow + possibleDestEatCol).css('background-color', 'green');
+                    }
+                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol] == BLACK_PAWN) {
+                        $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol).css('background-color', 'green');
+                    }
+                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol_1) && map[possibleDestEatRow][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol_1] == BLACK_PAWN) {
+                        $('#' + "tile" + possibleDestEatRow + possibleDestEatCol_1).css('background-color', 'green');
+                    }
+                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol_1) && map[possibleDestEatRow_1][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == BLACK_PAWN) {
+                        $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol_1).css('background-color', 'green');
+                    }
+                }
             }
         }
-    }
 
-    createMap();
-});
+        function resetTile() { //Remets le fond des cases coloré pour indiqué aux joueurs ou il peut jouer à leur couleur initial 
+            for (let row = 0; row < map.length; row++) {
+                for (let col = 0; col < map.length; col++) {
+                    if ((row % 2 == 0 && col % 2 == 1) || (row % 2 == 1 && col % 2 == 0)) { //Verifie si on est sur une tile pair ou impair de la map
+                        $('#' + "tile" + row + col).css('background-color', '#846839');
+                    }
+                }
+            }
+        }
+
+        function checkWinner() {
+            let player1PAWN = 0;
+            let player2PAWN = 0;
+            for (var row = 0; row < map.length; row++) {
+                for (var col = 0; col < map.length; col++) {
+                    if (map[row][col] == BLACK_PAWN || map[row][col] == BLACK_QUEEN_PAWN) {
+                        player1PAWN += 1;
+                    } else if (map[row][col] == WHITE_PAWN || map[row][col] == WHITE_QUEEN_PAWN) {
+                        player2PAWN += 2;
+                    }
+                }
+            }
+            if (player1PAWN == 0) {
+                console.log("PLAYER 2 is THE WINNER !")
+                $("#winnerInfo").css("display", "inherit");
+                $('#winnerPlayer').html("<b>Joueur BLANC</b>")
+                return endGame = true;
+            } else if (player2PAWN == 0) {
+                $("#winnerInfo").css("display", "inherit");
+                $('#winnerPlayer').html("<b>Joueur NOIR</b>")
+                console.log("PLAYER 1 is THE WINNER !")
+                return endGame = true;
+            }
+        }
+
+        function createMap() { //Crée la map du jeu 
+            for (let row = 0; row < map.length; row++) {
+                tile[row] = [];
+                for (let col = 0; col < map.length; col++) {
+                    tile[row][col] = new Tile(row, col); // on fait appel au constructeur Tile
+                    if ((row % 2 == 0 && col % 2 == 1) || (row % 2 == 1 && col % 2 == 0)) { //Verifie si on est sur une tile pair ou impair de la map
+                        tileDiv = tileDiv + "<div class=\"noir\" id=tile" + row + col + "></div>";
+                    } else {
+                        tileDiv = tileDiv + "<div class=\"blanc\" id=tile" + row + col + "></div>";
+                    } //On ajoute pour chaque tile un id qui défini la row et la col ex:(id="tile00", pour la tile à la row 0 et la col 0)
+                }
+            }
+            $("#game").html(tileDiv);
+            for (let row = 0; row < map.length; row++) {
+                for (let col = 0; col < map.length; col++) {
+                    tile[row][col].draw();
+
+                    $('#tile' + row + col).click(function () { //Code qui s'execute à chaque clique sur une case de la map
+                        if (!endGame) {
+
+                            if (checkPawnANDPlayer(this.id)) {
+                                clickedTile(this.id);
+                            } else if (isMovePossible(this.id) && canHeEat() == false) {
+                                // console.log("IL PEUT BOUGER");
+                                makeMove(this.id);
+                            }
+                            else if (eatPossible(currentTile, this.id) && canHeEat()) {
+                                // console.log("IL PEUT MANGER");
+                                eatPawn(this.id);
+                            }
+
+                        }
+                    });
+                }
+            }
+        }
+
+        createMap();
+    });
