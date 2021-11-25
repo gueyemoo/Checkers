@@ -432,7 +432,7 @@ $(document).ready(function () {
         let currentCol = getCol(currentTile);
 
         if (canHeEat() == false) {
-            if (currentPlayer == PLAYER_ONE && map[currentRow][currentCol] == BLACK_PAWN) {
+            if (currentPlayer == PLAYER_ONE && (map[currentRow][currentCol] == BLACK_PAWN || map[currentRow][currentCol] == BLACK_QUEEN_PAWN)) {
                 if (doesTileExist(possibleDestMoveRow, possibleDestMoveCol) && map[possibleDestMoveRow][possibleDestMoveCol] == EMPTY_BLACK_TILE) {
                     $('#' + "tile" + possibleDestMoveRow + possibleDestMoveCol).css('background-color', 'green');
                 }
@@ -552,7 +552,7 @@ $(document).ready(function () {
                 }
             }
 
-                if (currentPlayer == PLAYER_TWO && map[currentRow][currentCol] == WHITE_PAWN) {
+                if (currentPlayer == PLAYER_TWO && (map[currentRow][currentCol] == WHITE_PAWN || map[currentRow][currentCol] == WHITE_QUEEN_PAWN)) {
                     if (doesTileExist(possibleDestMoveRow_1, possibleDestMoveCol_1) && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == EMPTY_BLACK_TILE) {
                         $('#' + "tile" + possibleDestMoveRow_1 + possibleDestMoveCol_1).css('background-color', 'green');
                     }
@@ -560,33 +560,32 @@ $(document).ready(function () {
                         $('#' + "tile" + possibleDestMoveRow_1 + possibleDestMoveCol).css('background-color', 'green');
                     }
                 }
-            }
-            else if (canHeEat()) { //concercne les pions normaux et les dames
+            } else if (canHeEat()) { //concercne les pions normaux et les dames
                 if (currentPlayer == PLAYER_ONE) {
-                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol] == WHITE_PAWN) {
+                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && (map[possibleDestMoveRow][possibleDestMoveCol] == WHITE_PAWN || map[possibleDestMoveRow][possibleDestMoveCol] == WHITE_QUEEN_PAWN)) {
                         $('#' + "tile" + possibleDestEatRow + possibleDestEatCol).css('background-color', 'green');
                     }
-                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol] == WHITE_PAWN) {
+                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && (map[possibleDestMoveRow_1][possibleDestMoveCol] == WHITE_PAWN || map[possibleDestMoveRow_1][possibleDestMoveCol] == WHITE_QUEEN_PAWN)) {
                         $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol).css('background-color', 'green');
                     }
-                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol_1) && map[possibleDestEatRow][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol_1] == WHITE_PAWN) {
+                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol_1) && map[possibleDestEatRow][possibleDestEatCol_1] == EMPTY_BLACK_TILE && (map[possibleDestMoveRow][possibleDestMoveCol_1] == WHITE_PAWN || map[possibleDestMoveRow][possibleDestMoveCol_1] == WHITE_QUEEN_PAWN )) {
                         $('#' + "tile" + possibleDestEatRow + possibleDestEatCol_1).css('background-color', 'green');
                     }
-                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol_1) && map[possibleDestEatRow_1][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == WHITE_PAWN) {
+                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol_1) && map[possibleDestEatRow_1][possibleDestEatCol_1] == EMPTY_BLACK_TILE && (map[possibleDestMoveRow_1][possibleDestMoveCol_1] == WHITE_PAWN || map[possibleDestMoveRow_1][possibleDestMoveCol_1] == WHITE_QUEEN_PAWN )) {
                         $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol_1).css('background-color', 'green');
                     }
                 }
                 if (currentPlayer == PLAYER_TWO) {
-                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol] == BLACK_PAWN) {
+                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol) && map[possibleDestEatRow][possibleDestEatCol] == EMPTY_BLACK_TILE && (map[possibleDestMoveRow][possibleDestMoveCol] == BLACK_PAWN || map[possibleDestMoveRow][possibleDestMoveCol] == BLACK_QUEEN_PAWN)) {
                         $('#' + "tile" + possibleDestEatRow + possibleDestEatCol).css('background-color', 'green');
                     }
-                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol] == BLACK_PAWN) {
+                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol) && map[possibleDestEatRow_1][possibleDestEatCol] == EMPTY_BLACK_TILE && (map[possibleDestMoveRow_1][possibleDestMoveCol] == BLACK_PAWN || map[possibleDestMoveRow_1][possibleDestMoveCol] == BLACK_QUEEN_PAWN )) {
                         $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol).css('background-color', 'green');
                     }
-                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol_1) && map[possibleDestEatRow][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow][possibleDestMoveCol_1] == BLACK_PAWN) {
+                    if (doesTileExist(possibleDestEatRow, possibleDestEatCol_1) && map[possibleDestEatRow][possibleDestEatCol_1] == EMPTY_BLACK_TILE && (map[possibleDestMoveRow][possibleDestMoveCol_1] == BLACK_PAWN || map[possibleDestMoveRow][possibleDestMoveCol_1] == BLACK_QUEEN_PAWN)) {
                         $('#' + "tile" + possibleDestEatRow + possibleDestEatCol_1).css('background-color', 'green');
                     }
-                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol_1) && map[possibleDestEatRow_1][possibleDestEatCol_1] == EMPTY_BLACK_TILE && map[possibleDestMoveRow_1][possibleDestMoveCol_1] == BLACK_PAWN) {
+                    if (doesTileExist(possibleDestEatRow_1, possibleDestEatCol_1) && map[possibleDestEatRow_1][possibleDestEatCol_1] == EMPTY_BLACK_TILE && (map[possibleDestMoveRow_1][possibleDestMoveCol_1] == BLACK_PAWN || map[possibleDestMoveRow_1][possibleDestMoveCol_1] == BLACK_QUEEN_PAWN )) {
                         $('#' + "tile" + possibleDestEatRow_1 + possibleDestEatCol_1).css('background-color', 'green');
                     }
                 }
