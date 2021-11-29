@@ -13,7 +13,8 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "devDependencies": {
-    "cordova-plugin-whitelist": "^1.3.4"
+    "cordova-plugin-whitelist": "^1.3.4",
+    "mongoose-schema-jsonschema": "^2.0.1"
   },
   "cordova": {
     "plugins": {
@@ -21,6 +22,7 @@
     }
   },
   "dependencies": {
+    "mongodatabase": "file:mongo",
     "websocket": "^1.0.34"
   }
 }
