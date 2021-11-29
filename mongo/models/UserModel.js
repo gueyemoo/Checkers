@@ -1,10 +1,11 @@
-import {getMongoose} from "./DB";
+const DBModule = require('../DB.js')
 
+const mongoose = DBModule.getMongoose();
 const extendMongooose = require('mongoose-schema-jsonschema');
 
 extendMongooose(mongoose);
 
-const { Schema } = mongoose;
+const {Schema} = mongoose;
 
 
 const userSchema = new Schema({
@@ -13,9 +14,9 @@ const userSchema = new Schema({
 });
 
 
-export class UserModel {
+class UserModel {
 
-    static model = getMongoose().model("Users", userSchema);
+    static model = mongoose.model("Users", userSchema);
 
     static saveUser(username, hpassword) {
         let user = new this.model({username: username, password: hpassword});
@@ -34,7 +35,8 @@ export class UserModel {
 
     }
 
-    static getUserCredentials(userID) {}
+    static getUserCredentials(userID) {
+    }
 
 
 }

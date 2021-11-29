@@ -1,10 +1,12 @@
-import {getMongoose} from "./DB";
+const DBModule = require('../DB.js')
+
+const mongoose = DBModule.getMongoose();
 
 const extendMongooose = require('mongoose-schema-jsonschema');
 
 extendMongooose(mongoose);
 
-const { Schema } = mongoose;
+const {Schema} = mongoose;
 
 
 const userCredentialSchema = new Schema({
@@ -14,9 +16,9 @@ const userCredentialSchema = new Schema({
 });
 
 
-export class UserCredentialsModel {
+class UserCredentialsModel {
 
-    static table = getMongoose().model("Users_Credientials", userCredentialSchema);
+    static table = mongoose.model("Users_Credientials", userCredentialSchema);
 
     static loadFromID(userID) {
         return this.table.findOne({_id: userID})

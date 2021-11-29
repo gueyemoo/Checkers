@@ -1,4 +1,6 @@
-import {getMongoose} from "./DB";
+const DBModule = require('../DB.js')
+
+const mongoose = DBModule.getMongoose();
 
 const extendMongooose = require('mongoose-schema-jsonschema');
 
@@ -15,9 +17,9 @@ const gameStatesSchema = new Schema({
 });
 
 
-export class GammeStatesModel {
+class GammeStatesModel {
 
-    static table = getMongoose().model("Game_States", gameStatesSchema);
+    static table = mongoose.model("Game_States", gameStatesSchema);
 
     static getGameStates(gameID) {
         return this.table.find({gameID: gameID});
