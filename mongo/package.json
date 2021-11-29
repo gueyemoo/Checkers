@@ -1,0 +1,20 @@
+{
+  "name": "mongodatabase",
+  "version": "1.0.0",
+  "main": "DB.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "exports": {
+    ".": "DB.js",
+    "./UserModel": "./models/UserModel.js",
+    "./GamesModel": "./models/UserModel.js",
+    "./GameStatesModel": "./models/GameStatesModel.js",
+    "./UserCredentialsModel": "./models/UserCredentialsModel.js"
+  },
+  "author": "dorian",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "mongoose": "^6.0.13"
+  }
+}
