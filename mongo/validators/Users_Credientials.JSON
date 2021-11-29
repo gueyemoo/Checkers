@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "Users_Credientials",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "number",
+      "description": "User's id"
+    },
+    "credentials": {
+      "type": "string",
+      "description": "user's credentials stored in local storage"
+    },
+    "datetime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "save date"
+    }
+  },
+  "required": ["user_id", "credentials", "datetime"]
+}

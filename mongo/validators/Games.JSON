@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "Games",
+  "type": "object",
+  "properties": {
+    "user_id_1": {
+      "type": "number",
+      "description": "first user id"
+    },
+    "user_id_2": {
+      "type": "number",
+      "description": "second user id"
+    },
+    "datetime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "winner_id": {
+      "type": "number",
+      "description": "second user id",
+      "optionnal": true
+    }
+  },
+  "required": ["user_id_1", "user_id_2", "datetime"]
+}

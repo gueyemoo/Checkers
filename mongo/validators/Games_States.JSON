@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "Games_States",
+  "type": "object",
+  "properties": {
+    "game_id": {
+      "type": "number",
+      "description": "the game id"
+    },
+    "user_play_id": {
+      "type": "number",
+      "description": "the id of the user who played"
+    },
+    "state": {
+      "type": "string",
+      "description": "game board state stringified"
+    }
+  },
+  "required": ["game_id", "user_play_id", "state"]
+}

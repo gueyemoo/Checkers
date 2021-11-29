@@ -1,3 +1,4 @@
+const UserModel = require("mongodatabase/UserModel")
 const http = require('http');
 const server = http.createServer();
 server.listen(9898);
@@ -8,6 +9,8 @@ const wsServer = new WebSocketServer({
     httpServer: server
 });
 console.log('Serveur ouvert') // Message de validation de l'ouverture du serveur
+
+UserModel.UserModel.saveUser("test", "test");
 
 // Mise en place des événements WebSockets
 wsServer.on('request', function (request) {
