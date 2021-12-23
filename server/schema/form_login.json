@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "form_login",
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "string",
+      "description": "User's username"
+    },
+    "password": {
+      "type": "string",
+      "description": "user's password"
+    },
+    "keepConnection": {
+      "type": "boolean",
+      "description": "if the user want to stay connected",
+      "default": false
+    }
+  },
+  "required": ["username", "password"]
+}
+
