@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "Games",
+  "$id": "token_login",
   "type": "object",
   "properties": {
     "token": {
