@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "Games",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "number",
+      "description": "user id in database"
+    },
+    "winner": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 2,
+      "description": "user color"
+    }
+  },
+  "required": ["user_id", "winner"]
+}
+
