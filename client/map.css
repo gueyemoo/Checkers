@@ -48,8 +48,8 @@ svg {
 
 #game {
   display: block;
-  width: 400px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
   margin: auto;
   border: 5px solid black;
 }
