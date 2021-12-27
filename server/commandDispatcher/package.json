@@ -1,0 +1,15 @@
+{
+  "name": "commanddispatcher",
+  "version": "1.0.0",
+  "main": "./class/CommandDispatcher.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "exports": {
+    ".": "./class/CommandDispatcher.js",
+    "./CommandDispatcher": "./class/CommandDispatcher.js",
+    "./Command": "./class/Command.js"
+  },
+  "author": "dorian",
+  "license": "Apache-2.0"
+}
