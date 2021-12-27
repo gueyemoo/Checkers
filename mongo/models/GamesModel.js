@@ -29,3 +29,5 @@ class GammesModel {
         return this.table.find({$or: [{user_id_1: userID}, {user_id_2: userID}]});
     }
 }
+
+module.exports = {GammesModel};

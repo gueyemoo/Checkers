@@ -1,7 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "end_game",
+  "$id": "init_game",
   "type": "object",
+  "allOf": [{"$ref": "/server/commandDispatcher/schema/command.json"}],
   "properties": {
     "user_id": {
       "type": "number",
@@ -12,11 +13,7 @@
       "minimum": 1,
       "maximum": 2,
       "description": "user color"
-    },
-    "map": {
-      "type": "string",
-      "description": "stringified json game status"
     }
   },
-  "required": ["user_color", "map"]
+  "required": ["user_id", "user_color"]
 }

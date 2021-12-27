@@ -38,3 +38,5 @@ class UserCredentialsModel {
 
 
 }
+
+module.exports = {UserCredentialsModel};
