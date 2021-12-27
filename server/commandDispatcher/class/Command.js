@@ -4,7 +4,7 @@ class Command {
         this.name = name;
         let Validator = require('jsonschema').Validator;
         this.validator = new Validator();
-        this.schema = require('./schema/' + this.name + '.json')
+        this.schema = require('../schema/' + this.name + '.json')
         this.command = command;
     }
 
@@ -16,3 +16,5 @@ class Command {
         this.command(data);
     }
 }
+
+module.exports = Command;
