@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "mongodatabase": "file:mongo",
+    "commanddispatcher": "file:server/commandDispatcher",
     "websocket": "^1.0.34"
   }
 }
