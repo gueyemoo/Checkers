@@ -8,7 +8,7 @@
   "exports": {
     ".": "DB.js",
     "./UserModel": "./models/UserModel.js",
-    "./GamesModel": "./models/UserModel.js",
+    "./GamesModel": "./models/GamesModel.js",
     "./GameStatesModel": "./models/GameStatesModel.js",
     "./UserCredentialsModel": "./models/UserCredentialsModel.js"
   },
