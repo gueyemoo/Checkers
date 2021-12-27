@@ -25,3 +25,5 @@ class GammeStatesModel {
         return this.table.find({gameID: gameID});
     }
 }
+
+module.exports = {GammeStatesModel};
