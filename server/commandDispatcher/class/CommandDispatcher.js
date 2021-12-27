@@ -24,3 +24,5 @@ class CommandDispatcher {
     }
 
 }
+
+module.exports = CommandDispatcher;
