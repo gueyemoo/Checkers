@@ -1,20 +1,19 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "end_game",
+  "$id": "init_game",
   "type": "object",
-  "allOf": [{"$ref": "/server/schema/command.json"}],
+  "allOf": [{"$ref": "/server/commandDispatcher/schema/command.json"}],
   "properties": {
     "user_id": {
       "type": "number",
       "description": "user id in database"
     },
-    "winner": {
+    "user_color": {
       "type": "number",
       "minimum": 1,
       "maximum": 2,
       "description": "user color"
     }
   },
-  "required": ["user_id", "winner"]
+  "required": ["user_id", "user_color"]
 }
-
