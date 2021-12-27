@@ -7,7 +7,6 @@ extendMongooose(mongoose);
 
 const {Schema} = mongoose;
 
-
 const userSchema = new Schema({
     username: {type: String, required: true, description: "User's username"},
     password: {type: String, required: true, description: "user's password"}
@@ -40,3 +39,5 @@ class UserModel {
 
 
 }
+
+module.exports = {UserModel};
