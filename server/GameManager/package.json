@@ -1,0 +1,19 @@
+{
+  "name": "gamemanager",
+  "version": "1.0.0",
+  "main": "class/GameManager.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "exports": {
+    ".": "./class/GameManager.js",
+    "./GameManager": "./class/GameManager.js",
+    "./Player": "./class/Player.js",
+    "./Game": "./class/Game.js"
+  },
+  "author": "dorian",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "mongodatabase": "file:../../mongo"
+  }
+}
