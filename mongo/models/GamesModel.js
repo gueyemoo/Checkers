@@ -28,6 +28,14 @@ class GammesModel {
     static getUserGames(userID) {
         return this.table.find({$or: [{user_id_1: userID}, {user_id_2: userID}]});
     }
+
+    static createNewGame(player1Id, player2Id) {
+        this.table.insert({
+            "user_id_1": player1Id,
+            "user_id_2": player2Id,
+            "datetime": Date.now().toString()
+        }).save();
+    }
 }
 
 module.exports = {GammesModel};
