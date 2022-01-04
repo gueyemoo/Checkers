@@ -16,8 +16,7 @@ const gamesSchema = new Schema({
     winner_id: {type: Number, required: false, description: "Winner user id"}
 });
 
-
-class GammesModel {
+class GamesModel {
 
     static table = mongoose.model("Games", gamesSchema);
 
@@ -29,17 +28,19 @@ class GammesModel {
         return this.table.find({$or: [{user_id_1: userID}, {user_id_2: userID}]});
     }
 
-    static getUserLastGame(userId) {
-        return this.table.findOne({$or: [{user_id_1: userId}, {user_id_2: userId}]}).sort({_id: -1}).exec();
+    static async getUserLastGame(userId, callback) {
+        const game = await this.table.findOne({$or: [{user_id_1: userId}, {user_id_2: userId}]}).sort({_id: -1}).exec().then((game) => {return game});
+        callback(game);
     }
 
     static createNewGame(player1Id, player2Id) {
-        this.table.insert({
+        let game = new this.table({
             "user_id_1": player1Id,
             "user_id_2": player2Id,
             "datetime": Date.now().toString()
-        }).save();
+        });
+        game.save();
     }
 }
 
-module.exports = {GammesModel};
+module.exports = GamesModel;
