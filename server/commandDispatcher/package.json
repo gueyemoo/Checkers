@@ -11,5 +11,9 @@
     "./Command": "./class/Command.js"
   },
   "author": "dorian",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "gamemanager": "file:../GameManager",
+    "mongodatabase": "file:../../mongo"
+  }
 }
