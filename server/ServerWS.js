@@ -7,8 +7,10 @@ const WebSocketServer = require('websocket').server;
 const wsServer = new WebSocketServer({
     httpServer: server
 });
-const commandDispatcher = require("commanddispatcher/CommandDispatcher").getInstance();
 
+const commandDispatcher = require("commanddispatcher/CommandDispatcher").getInstance();
+const gameManager = require("gamemanager/GameManager").getInstance();
+gameManager.createGame({userId: 1}, {userId: 2});
 // Message de validation de l'ouverture du serveur
 console.log('Serveur ouvert')
 
