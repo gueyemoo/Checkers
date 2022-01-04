@@ -1,4 +1,5 @@
 const GamesModel = require("mongodatabase/GamesModel");
+const commandDispatcher = require("commanddispatcher/CommandDispatcher").getInstance();
 
 class GameManager {
 
@@ -26,15 +27,17 @@ class GameManager {
 
     createGame(player1, player2) {
         GamesModel.createNewGame(player1.userId, player2.userId);
-        player1.connection.send({
-           "userId": player1.userId,
-           "user_color": 1
-        });
-
-        player2.connection.send({
+        console.log(GamesModel.getUserLastGame(player1.userId));
+        const player1Data = {
+            "userId": player1.userId,
+            "user_color": 1
+        };
+        const player2Data ={
            "userId": player1.userId,
            "user_color": 2
-        });
+        }
+        commandDispatcher.dispatch("init_game", player1Data);
+        commandDispatcher.dispatch("init_game", player2Data);
     }
 
     static getInstance() {
