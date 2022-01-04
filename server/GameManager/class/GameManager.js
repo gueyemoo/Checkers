@@ -1,4 +1,5 @@
 const GamesModel = require("mongodatabase/GamesModel");
+const Game = require("gamemanager/Game");
 const commandDispatcher = require("commanddispatcher/CommandDispatcher").getInstance();
 
 class GameManager {
@@ -6,12 +7,12 @@ class GameManager {
     static instance = null;
 
     constructor() {
-        this.games =  [];
+        this.games = [];
         this.waitingList = [];
     }
 
-    addGame(game) {
-        this.games.push(game);
+    static addGame(game) {
+        GameManager.instance.games.push(new Game(game._id, game.user_id_1, game.user_id_2));
     }
 
     joinWaitingList(player) {
@@ -27,14 +28,16 @@ class GameManager {
 
     createGame(player1, player2) {
         GamesModel.createNewGame(player1.userId, player2.userId);
-        console.log(GamesModel.getUserLastGame(player1.userId));
+        GamesModel.getUserLastGame(player1.userId, GameManager.addGame);
         const player1Data = {
-            "userId": player1.userId,
+            "command": "init_game",
+            "user_id": player1.userId,
             "user_color": 1
         };
-        const player2Data ={
-           "userId": player1.userId,
-           "user_color": 2
+        const player2Data = {
+            "command": "init_game",
+            "user_id": player1.userId,
+            "user_color": 2
         }
         commandDispatcher.dispatch("init_game", player1Data);
         commandDispatcher.dispatch("init_game", player2Data);
