@@ -13,7 +13,9 @@ class Command {
     }
 
     execute(data) {
-        this.command(data);
+        if (this.validate(data)) {
+            this.command(data);
+        } else console.log("Commande non reconnue : " + this.name + " pour les data : " + data);
     }
 }
 
