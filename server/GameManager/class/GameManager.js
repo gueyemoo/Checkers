@@ -1,6 +1,5 @@
 const GamesModel = require("mongodatabase/GamesModel");
 const Game = require("gamemanager/Game");
-const commandDispatcher = require("commanddispatcher/CommandDispatcher").getInstance();
 
 class GameManager {
 
@@ -39,6 +38,7 @@ class GameManager {
             "user_id": player1.userId,
             "user_color": 2
         }
+        const commandDispatcher = require("commanddispatcher/CommandDispatcher").getInstance();
         commandDispatcher.dispatch("init_game", player1Data);
         commandDispatcher.dispatch("init_game", player2Data);
     }
