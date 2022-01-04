@@ -48,7 +48,6 @@ $(document).ready(function () {
     let isNextJumpPossible = false;
     let endGame = false;
 
-
     //GAME LOGIQUE 
     function Tile(row, col) { // Construit un constructeur de la map qui prend en parametre la row et la col 
         this.value = map[row][col];
@@ -1053,3 +1052,4 @@ $(document).ready(function () {
 
     createMap();
 });
+
