@@ -30,7 +30,7 @@ class GammesModel {
     }
 
     static getUserLastGame(userId) {
-        return this.table.findOne({userId: userId}).sort({_id: -1}).exec();
+        return this.table.findOne({$or: [{user_id_1: userId}, {user_id_2: userId}]}).sort({_id: -1}).exec();
     }
 
     static createNewGame(player1Id, player2Id) {
