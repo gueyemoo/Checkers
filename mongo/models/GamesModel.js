@@ -29,6 +29,10 @@ class GammesModel {
         return this.table.find({$or: [{user_id_1: userID}, {user_id_2: userID}]});
     }
 
+    static getUserLastGame(userId) {
+        return this.table.findOne({userId: userId}).sort({_id: -1}).exec();
+    }
+
     static createNewGame(player1Id, player2Id) {
         this.table.insert({
             "user_id_1": player1Id,
