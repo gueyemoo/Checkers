@@ -25,6 +25,7 @@
   "dependencies": {
     "mongodatabase": "file:mongo",
     "commanddispatcher": "file:server/commandDispatcher",
+    "gamemanager": "file:server/GameManager",
     "websocket": "^1.0.34"
   }
 }
