@@ -23,6 +23,7 @@
   "dependencies": {
     "commanddispatcher": "file:server/commandDispatcher",
     "mongodatabase": "file:mongo",
+    "gamemanager": "file:server/GameManager",
     "websocket": "^1.0.34"
   },
   "cordova": {

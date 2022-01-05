@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "end_game",
   "type": "object",
-  "allOf": [{"$ref": "/server/commandDispatcher/schema/command.json"}],
+  "allOf": [{"$ref": "/command"}],
   "properties": {
     "user_id": {
       "type": "number",

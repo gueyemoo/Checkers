@@ -4,16 +4,22 @@ class Command {
         this.name = name;
         let Validator = require('jsonschema').Validator;
         this.validator = new Validator();
+        const commandSchema = require("../schema/command.json");
+        this.validator.addSchema(commandSchema, "/command");
         this.schema = require('../schema/' + this.name + '.json')
         this.command = command;
     }
 
     validate(object) {
-        return this.validator.validate(object, this.schema).valid;
+        const validator = this.validator.validate(object, this.schema);
+        console.log(validator.errors);
+        return validator.valid;
     }
 
     execute(data) {
-        this.command(data);
+        if (this.validate(data)) {
+            this.command(data);
+        } else console.log("Commande non reconnue : " + this.name + " pour les data : " + JSON.stringify(data));
     }
 }
 
