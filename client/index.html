@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -15,13 +15,26 @@
           <h1>Jeu de dame en ligne</h1>
           <div class="formCase">
             <label for="pseudo"> Pseudo : </label>
-            <input type="text" placeholder="Pseudo" />
+            <input
+              type="text"
+              placeholder="Pseudo"
+              id="username"
+              required="true"
+            />
           </div>
           <div class="formCase">
             <label for="password"> Mot de passe : </label>
-            <input type="password" placeholder="Mot de passe" />
+            <input
+              type="password"
+              placeholder="Mot de passe"
+              id="password"
+              required="true"
+            />
           </div>
-          <button type="button" onclick="startGame()">Jouer</button>
+          <div id="NoCredential">
+            Veuillez saisir un pseudo et un mot de passe avant de jouer.
+          </div>
+          <button id="startGame" type="button" onclick="startGame()">Jouer</button>
         </div>
 
         <div id="regle">
@@ -52,17 +65,17 @@
           Au tour du : <span id="currentPlayer"> <b>Joueur NOIR</b> </span>
         </p>
 
-        <p id="winnerInfo" style="display:none">
+        <p id="winnerInfo" style="display: none">
           Et le gagnant est : <span id="winnerPlayer"></span>
         </p>
       </div>
 
-        <div id="game">
-          <!-- On aura cette forme  -->
-          <!-- <div class="blanc" id="tile00"></div> -->
-          <!-- <div class="noir" id="tile01"> svg si pion dedans </div> -->
-          <!-- ... -->
-        </div>
+      <div id="game">
+        <!-- On aura cette forme  -->
+        <!-- <div class="blanc" id="tile00"></div> -->
+        <!-- <div class="noir" id="tile01"> svg si pion dedans </div> -->
+        <!-- ... -->
+      </div>
     </div>
 
     <script
@@ -73,8 +86,15 @@
     <script src="game.js"></script>
     <script>
       function startGame() {
-        $("#menu").css("display", "none");
-        $("#gameContainer").css("display", "inherit");
+        if (
+          document.getElementById("username").value == "" ||
+          document.getElementById("password").value == ""
+        ) {
+          $("#NoCredential").css("display", "inherit");
+        } else {
+          $("#menu").css("display", "none");
+          $("#gameContainer").css("display", "inherit");
+        }
       }
     </script>
   </body>

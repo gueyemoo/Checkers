@@ -72,3 +72,8 @@ svg {
     opacity: 1;
   }
 }
+
+#NoCredential{
+  display: none;
+  color: red;
+}

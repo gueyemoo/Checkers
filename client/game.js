@@ -1,3 +1,27 @@
+const ws = new WebSocket('ws://127.0.0.1:9898/');
+
+document.getElementById('startGame').onclick = function () {
+    //Recupere les valeurs en input de l'utilisateur
+    var login_input = document.getElementById("username").value;
+    var password_input = document.getElementById("password").value;
+
+    //Mets les valeurs récupéré dans un format json
+    var user_json = {
+        command: "form_login",
+        username: login_input,
+        password: password_input,
+        keepConnection: false,
+    };
+
+    //Transforme en objet Json
+    var msg_json = JSON.stringify(user_json);
+
+    // Envoie au serveur sous format json les valeurs saisie par l'utilisateur
+    ws.send(msg_json);
+    console.log(msg_json);
+}
+
+
 $(document).ready(function () {
     let map = [
         [0, 3, 0, 3, 0, 3, 0, 3, 0, 3], // 0 : tile blanche vide
@@ -41,13 +65,21 @@ $(document).ready(function () {
 
     let id_joueur = Infinity;
 
+    ws.onopen = function () { //Message lors de l'ouverture du websocket
+        console.log("(Client) Le WebSocket est ouvert.");
+    };
+
+
+    ws.onmessage = function (e) { //Retourne le message reçu du serveur
+        console.log("(Client) le message reçu du serveur est : " + e.data.command==="init_game");
+    };
+
     let tile = [];
     let tileDiv = "";
     let currentTile = "";
 
     let isNextJumpPossible = false;
     let endGame = false;
-
 
     //GAME LOGIQUE 
     function Tile(row, col) { // Construit un constructeur de la map qui prend en parametre la row et la col 
@@ -107,6 +139,9 @@ $(document).ready(function () {
 
     function switchPlayer() { //Permet de changer de joueur courant
         if (currentPlayer == PLAYER_ONE) { // Si le joueur courant est le joueur 1 on passe au joueur 2
+
+            ////
+            ////
             currentPlayer = PLAYER_TWO;
         } else {
             currentPlayer = PLAYER_ONE;
@@ -1053,3 +1088,4 @@ $(document).ready(function () {
 
     createMap();
 });
+
