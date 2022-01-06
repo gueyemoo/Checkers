@@ -15,6 +15,7 @@ class GameManager {
     }
 
     joinWaitingList(player) {
+        console.log("User : " + player.userId + " placed in the queue");
         this.waitingList.push(player);
         if (this.waitingList.length >= 2) {
             let player1 = this.waitingList[0];
