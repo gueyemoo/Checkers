@@ -39,4 +39,4 @@ class UserModel {
 
 }
 
-module.exports = {UserModel};
+module.exports = UserModel;
