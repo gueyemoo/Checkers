@@ -24,7 +24,7 @@ const formLoginCommand = function (data, connection) {
             CommandDispatcher.getInstance().dispatch("message", messageData, connection);
         });
         else {
-            if (messageData.password !== user.password) {
+            if (data.password !== user.password) {
                 messageData.message = "Authentication Failed !! Wrong password";
                 messageData.success = false;
             } else {
