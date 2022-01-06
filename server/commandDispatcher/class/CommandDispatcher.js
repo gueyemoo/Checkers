@@ -1,4 +1,6 @@
 const gameManager = require("gamemanager/GameManager").getInstance();
+const UserModel = require("mongodatabase/UserModel");
+const Player = require("gamemanager/Player");
 
 const initGameCommand = function (data) {
 
@@ -12,13 +14,14 @@ const moveCommand = function (data) {
 }
 
 
-const formLoginCommand = function (data) {
-    
+const formLoginCommand = function (data, connection) {
+
 }
 
 const tokenLogin = function (data) {
 
 }
+
 
 class CommandDispatcher {
 
@@ -34,10 +37,10 @@ class CommandDispatcher {
         this.commands["token_login"] = new Command("token_login", tokenLogin);
     }
 
-    dispatch(command, data) {
+    dispatch(command, data, connection) {
         if (!this.commands[command]) return;
         if (!this.commands[command].validate(data)) return;
-        this.commands[command].execute(data);
+        this.commands[command].execute(data, connection);
     }
 
     static getInstance() {
