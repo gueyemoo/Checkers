@@ -19,6 +19,8 @@ const formLoginCommand = function (data, connection) {
         let data = {command: "form_login"}
         data.message = "Authentication Success !!! you're in the queue";
         data.success = true;
+        console.log("data");
+        console.log(data);
         if (user == null) UserModel.saveUser(data.username, data.password).then((user) =>  {
             gameManager.joinWaitingList(new Player(user._id, connection))
             CommandDispatcher.getInstance().dispatch("message", data, connection);
