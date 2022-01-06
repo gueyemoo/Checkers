@@ -26,4 +26,4 @@ class GammeStatesModel {
     }
 }
 
-module.exports = {GammeStatesModel};
+module.exports = GammeStatesModel;
