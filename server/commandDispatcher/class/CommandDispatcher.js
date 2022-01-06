@@ -15,7 +15,24 @@ const moveCommand = function (data) {
 
 
 const formLoginCommand = function (data, connection) {
-
+    UserModel.loadFromUsername(data.username).then((user) => {
+        let data = {command: "form_login"}
+        data.message = "Authentication Success !!! you're in the queue";
+        data.success = true;
+        if (user == null) UserModel.saveUser(data.user, data.password).then((user) =>  {
+            gameManager.joinWaitingList(new Player(user._id, connection))
+            CommandDispatcher.getInstance().dispatch("message", data, connection);
+        });
+        else {
+            if (data.password !== user.password) {
+                data.message = "Authentication Failed !! Wrong password";
+                data.success = false;
+            } else {
+                gameManager.joinWaitingList(new Player(user._id, connection));
+            }
+            CommandDispatcher.getInstance().dispatch("message", data, connection);
+        }
+    });
 }
 
 const tokenLogin = function (data) {
