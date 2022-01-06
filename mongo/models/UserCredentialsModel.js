@@ -39,4 +39,4 @@ class UserCredentialsModel {
 
 }
 
-module.exports = {UserCredentialsModel};
+module.exports = UserCredentialsModel;
