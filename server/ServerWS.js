@@ -24,8 +24,7 @@ wsServer.on('request', function (request) {
         // On récupère la partie utf8Data du message reçu
         let messageParsed = JSON.parse(message.utf8Data);
 
-        let response = commandDispatcher.dispatch(messageParsed.command, messageParsed);
-        connection.send(response);
+        commandDispatcher.dispatch(messageParsed.command, messageParsed, connection);
     });
 
     // Déconnexion d'un joueur
