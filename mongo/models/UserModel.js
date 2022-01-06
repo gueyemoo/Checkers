@@ -18,7 +18,8 @@ class UserModel {
     static model = mongoose.model("Users", userSchema);
 
     static saveUser(username, hpassword) {
-        return new this.model({username: username, password: hpassword}).save();
+        const user = new this.model({username: username, password: hpassword});
+        return user.save();
     }
 
     static loadFromID(userID) {
