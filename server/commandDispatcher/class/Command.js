@@ -16,9 +16,9 @@ class Command {
         return validator.valid;
     }
 
-    execute(data) {
+    execute(data, connection) {
         if (this.validate(data)) {
-            this.command(data);
+            this.command(data, connection);
         } else console.log("Commande non reconnue : " + this.name + " pour les data : " + JSON.stringify(data));
     }
 }
