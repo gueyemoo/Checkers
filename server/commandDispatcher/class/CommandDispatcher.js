@@ -22,6 +22,9 @@ const tokenLogin = function (data) {
 
 }
 
+const message = function (data, connection) {
+    connection.send(data);
+}
 
 class CommandDispatcher {
 
@@ -35,6 +38,7 @@ class CommandDispatcher {
         this.commands["init_game"] = new Command("init_game", initGameCommand);
         this.commands["move"] = new Command("move", moveCommand);
         this.commands["token_login"] = new Command("token_login", tokenLogin);
+        this.commands["message"] = new Command("message", message)
     }
 
     dispatch(command, data, connection) {
