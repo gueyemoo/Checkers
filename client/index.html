@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html> -->
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -34,7 +34,8 @@
           <div id="NoCredential">
             Veuillez saisir un pseudo et un mot de passe avant de jouer.
           </div>
-          <button id="startGame" type="button" onclick="startGame()">Jouer</button>
+          <div id="msg_retour"></div>
+          <button class="playButton" type="button" onclick="startGame()">Jouer en ligne</button>
         </div>
 
         <div id="regle">
@@ -49,11 +50,6 @@
             </li>
             <li>Les prises sont obligatoires.</li>
             <li>un Pion peut reculer en mangeant !</li>
-            <li>
-              <a href="https://www.regledujeu.fr/regle-jeu-de-dames/">
-                etc...
-              </a>
-            </li>
           </ul>
         </div>
       </div>
@@ -92,8 +88,42 @@
         ) {
           $("#NoCredential").css("display", "inherit");
         } else {
-          $("#menu").css("display", "none");
-          $("#gameContainer").css("display", "inherit");
+
+          const ws = new WebSocket('ws://127.0.0.1:9898/');
+
+          //Recupere les valeurs en input de l'utilisateur
+          let login_input = document.getElementById("username").value;
+          let password_input = document.getElementById("password").value;
+
+          //Mets les valeurs récupéré dans un format json
+          let user_json = {
+            command: "form_login",
+            username: login_input,
+            password: password_input,
+            keepConnection: false,
+          };
+
+          //Transforme en objet Json
+          let msg_json = JSON.stringify(user_json);
+
+          // Envoie au serveur sous format json les valeurs saisie par l'utilisateur
+          ws.onmessage = function(e){
+            console.log(JSON.parse(e.data));
+            let msg = JSON.parse(e.data);
+          
+            if(msg.success === true){
+              console.log("EASY")
+              $("#menu").css("display", "none");
+              $("#gameContainer").css("display", "inherit");          
+            }else{
+              $("#msg_retour").html('<p>  ' + msg.message + '</p>');
+              $("#msg_retour").css("color", "red");
+              $("#NoCredential").css("display", "none");
+            }
+          }
+          ws.onopen = () => ws.send(msg_json);
+          console.log(msg_json);
+
         }
       }
     </script>

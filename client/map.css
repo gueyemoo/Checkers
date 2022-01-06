@@ -46,6 +46,10 @@ svg {
   display: flex;
 }
 
+.playButton{
+  width: 50%;
+}
+
 #game {
   display: block;
   width: 500px;
