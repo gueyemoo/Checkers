@@ -21,7 +21,7 @@ const formLoginCommand = function (data, connection) {
         messageData.success = true;
         if (user == null) UserModel.saveUser(data.username, data.password).then((user) =>  {
             gameManager.joinWaitingList(new Player(user._id, connection))
-            CommandDispatcher.getInstance().dispatch("message", data, connection);
+            CommandDispatcher.getInstance().dispatch("message", messageData, connection);
         });
         else {
             if (messageData.password !== user.password) {
@@ -39,8 +39,8 @@ const tokenLogin = function (data) {
 
 }
 
-const message = function (data, connection) {
-    connection.send(data);
+const messageCommand = function (data, connection) {
+    connection.send(JSON.stringify(data));
 }
 
 class CommandDispatcher {
@@ -55,7 +55,7 @@ class CommandDispatcher {
         this.commands["init_game"] = new Command("init_game", initGameCommand);
         this.commands["move"] = new Command("move", moveCommand);
         this.commands["token_login"] = new Command("token_login", tokenLogin);
-        this.commands["message"] = new Command("message", message)
+        this.commands["message"] = new Command("message", messageCommand)
     }
 
     dispatch(command, data, connection) {
