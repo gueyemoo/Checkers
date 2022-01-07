@@ -11,7 +11,7 @@ class GameManager {
     }
 
     addGame(game) {
-        this.games.push(new Game(game._id, game.user_id_1, game.user_id_2));
+        this.games.push(new Game(game._id, game.player1, game.player2));
     }
 
     joinWaitingList(player) {
@@ -28,6 +28,8 @@ class GameManager {
 
     createGame(player1, player2) {
         GamesModel.createNewGame(player1.userId, player2.userId).then((game) => {
+            game.player1 = player1;
+            game.player2 = player2;
             this.addGame(game);
             const player1Data = {
                 "command": "init_game",
