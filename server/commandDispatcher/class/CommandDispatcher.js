@@ -50,6 +50,10 @@ const messageCommand = function (data, connection) {
     connection.send(JSON.stringify(data));
 }
 
+const cancelGameCommand = function (data) {
+
+}
+
 class CommandDispatcher {
 
     static instance = null;
@@ -63,6 +67,7 @@ class CommandDispatcher {
         this.commands["move"] = new Command("move", moveCommand);
         this.commands["token_login"] = new Command("token_login", tokenLogin);
         this.commands["message"] = new Command("message", messageCommand)
+        this.commands["cancel_game"] = new Command("cancel_game", cancelGameCommand)
     }
 
     dispatch(command, data, connection) {
