@@ -5,7 +5,7 @@
   "allOf": [{"$ref": "/command"}],
   "properties": {
     "user_id": {
-      "type": "number",
+      "type": "string",
       "description": "user id in database"
     },
     "winner": {
