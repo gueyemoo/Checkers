@@ -10,8 +10,8 @@ class GameManager {
         this.waitingList = [];
     }
 
-    static addGame(game) {
-        GameManager.instance.games.push(new Game(game._id, game.user_id_1, game.user_id_2));
+    addGame(game) {
+        this.games.push(new Game(game._id, game.user_id_1, game.user_id_2));
     }
 
     joinWaitingList(player) {
