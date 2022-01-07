@@ -1,4 +1,3 @@
-
 const ONLINE = 1;
 const LOCAL = 2;
 
@@ -34,9 +33,9 @@ function startGameOnline() {
         //Transforme en objet Json
         let msg_json = JSON.stringify(user_json);
 
-        // Envoie au serveur sous format json les valeurs saisie par l'utilisateur
+        // Receptionne le retour du serveur sous format json pour initialisé les variables de départ du jeu
         ws.onmessage = function (e) {
-            console.log(JSON.parse(e.data));
+            // console.log(JSON.parse(e.data));
             let msg = JSON.parse(e.data);
 
             if (msg.success === true) {
@@ -53,12 +52,12 @@ function startGameOnline() {
                 player_pos = msg.user_color;
                 id_joueur = msg.user_id;
 
-                console.log(msg.user_color);
-                console.log(id_joueur)
+                // console.log(msg.user_color);
+                // console.log(id_joueur)
             }
         };
+        // Envoie au serveur sous format json les valeurs saisie par l'utilisateur
         ws.onopen = () => ws.send(msg_json);
-        // console.log(msg_json);
     }
 }
 
@@ -82,19 +81,6 @@ $(document).ready(function () {
         [0, 2, 0, 2, 0, 2, 0, 2, 0, 2],
         [2, 0, 2, 0, 2, 0, 2, 0, 2, 0]
     ];
-
-    // let map = [
-    //     [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], // 0 : tile blanche vide
-    //     [1, 0, 2, 0, 1, 0, 1, 0, 1, 0], // 1 : tile noir vide
-    //     [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], // 2 : pion blanc
-    //     [30, 0, 1, 0, 3, 0, 1, 0, 1, 0], // 3 : pion noir
-    //     [0, 1, 0, 1, 0, 30, 0, 1, 0, 1], // 20 : dame blanc
-    //     [1, 0, 1, 0, 1, 0, 1, 0, 1, 0], // 30 : dame noir
-    //     [0, 20, 0, 2, 0, 1, 0, 20, 0, 1],
-    //     [1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-    //     [0, 1, 0, 0, 0, 1, 0, 3, 0, 1],
-    //     [1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
-    // ];
 
     const EMPTY_WHITE_TILE = 0;
     const EMPTY_BLACK_TILE = 1;
@@ -166,7 +152,7 @@ $(document).ready(function () {
             currentTile = tile; //Défini la nouvelle case courante 
             checkPossibilities(tile);
             startAnimation(tile);
-            console.log(currentTile);
+            // console.log(currentTile);
         }
 
     }
@@ -202,22 +188,28 @@ $(document).ready(function () {
         draw();
         resetTile();
         checkWinner();
+        if (game_statut == ONLINE) {
+            let map_stry = JSON.stringify(map);
 
-        let map_stry = JSON.stringify(map);
+            //Mets les valeurs récupéré dans un format json
+            let msg_move_json = {
+                command: "move",
+                user_id: id_joueur,
+                user_color: currentPlayer,
+                map: map_stry
+            };
 
-        //Mets les valeurs récupéré dans un format json
-        let msg_move_json = {
-            command: "move",
-            user_id: id_joueur,
-            user_color: currentPlayer,
-            map: map_stry
-        };
+            //Transforme en objet Json
+            let msg_m_json = JSON.stringify(msg_move_json);
 
-        //Transforme en objet Json
-        let msg_m_json = JSON.stringify(msg_move_json);
+            // Envoie au serveur sous format json la map actuelle
+            ws.send(msg_m_json);
 
-        // Envoie au serveur sous format json la map actuelle
-        ws.send(msg_m_json);
+            ws.onmessage = function (e) {
+                // console.log(e.data.map);
+            }
+
+        }
 
         switchPlayer();
 

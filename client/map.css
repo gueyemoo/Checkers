@@ -34,6 +34,14 @@ svg {
   flex: 1;
 }
 
+#home label{
+  display: inline-block;
+  width: 100px;
+  text-align: right;
+  margin-right: 5px;
+}
+
+
 #regle {
   flex: 1;
 }
@@ -44,10 +52,16 @@ svg {
 
 .formCase {
   display: flex;
+  margin-bottom: 5px;
 }
 
 .playButton{
-  width: 50%;
+  width: 30%;
+  margin: 5px 15px 0px 15px;
+}
+
+#informations{
+  text-align: center;
 }
 
 #game {
