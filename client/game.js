@@ -1,9 +1,15 @@
+
+const ONLINE = 1;
+const LOCAL = 2;
+
 let currentPlayer = 1;
 let player_pos = Infinity;
 let id_joueur = "";
+let game_statut = 0;
 
 
-function startGame() {
+function startGameOnline() {
+    game_statut = ONLINE;
     if (
         document.getElementById("username").value == "" ||
         document.getElementById("password").value == ""
@@ -55,6 +61,13 @@ function startGame() {
         // console.log(msg_json);
     }
 }
+
+function startGameLocal() {
+    game_statut = LOCAL;
+    $("#menu").css("display", "none");
+    $("#gameContainer").css("display", "inherit");
+}
+
 
 $(document).ready(function () {
     let map = [
@@ -207,17 +220,6 @@ $(document).ready(function () {
         ws.send(msg_m_json);
 
         switchPlayer();
-        // ws.onmessage = function (e) {
-        //     if(e.data.map!=null){
-        //         // console.log("COUCOU "+e.data.map);
-        //     }else{
-        //         if(currentPlayer==PLAYER_ONE){
-        //             $("#waitList").html("<b> Joueur"+PLAYER_TWO+"en attente..</b>")
-        //         }else{
-        //             $("#waitList").html("<b> Joueur" + PLAYER_ONE + "en attente..</b>")
-        //         }
-        //     }
-        // };
 
     }
 
@@ -1119,7 +1121,22 @@ $(document).ready(function () {
 
                 $('#tile' + row + col).click(function () { //Code qui s'execute à chaque clique sur une case de la map
                     if (!endGame) {
-                        if (player_pos == currentPlayer) {
+                        if (game_statut == ONLINE) {
+
+                            if (player_pos == currentPlayer) {
+                                if (checkPawnANDPlayer(this.id)) {
+                                    clickedTile(this.id);
+                                } else if (isMovePossible(this.id) && canHeEat() == false && canQueenEat() == false) {
+                                    makeMove(this.id);
+                                }
+                                else if (eatPossible(currentTile, this.id) && canHeEat() && canQueenEat() == false) { //CanHeEat() verifie qu'il y a une possibilité quelque part dans le tableau de manger un pion et eatPossible verifie que l'ont clique sur la bonne case pour manger le pion
+                                    eatPawn(this.id);
+                                }
+                                else if (eatPossibleQueen(currentTile, this.id) && (canHeEat() == false && canQueenEat() || canHeEat() && canQueenEat())) {
+                                    eatPawnQueen(this.id);
+                                }
+                            }
+                        } else if (game_statut == LOCAL) {
                             if (checkPawnANDPlayer(this.id)) {
                                 clickedTile(this.id);
                             } else if (isMovePossible(this.id) && canHeEat() == false && canQueenEat() == false) {
