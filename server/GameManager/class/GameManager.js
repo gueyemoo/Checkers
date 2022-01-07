@@ -20,8 +20,8 @@ class GameManager {
         if (this.waitingList.length >= 2) {
             let player1 = this.waitingList[0];
             let player2 = this.waitingList[1];
-            this.waitingList.remove(player1)
-            this.waitingList.remove(player2)
+            this.waitingList.splice(0, 1);
+            this.waitingList.splice(1, 1);
             this.createGame(player1, player2);
         }
     }
