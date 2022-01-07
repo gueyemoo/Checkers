@@ -2,8 +2,8 @@ const gameManager = require("gamemanager/GameManager").getInstance();
 const UserModel = require("mongodatabase/UserModel");
 const Player = require("gamemanager/Player");
 
-const initGameCommand = function (data) {
-
+const initGameCommand = function (data, connection) {
+    messageCommand(data, connection);
 }
 
 const endGameCommand = function (data) {
