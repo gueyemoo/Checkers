@@ -8,7 +8,7 @@ const initGameCommand = function (data, connection) {
 
 const endGameCommand = function (data, connection) {
     const game = gameManager.getPlayerGame(data.user_id);
-    if (!game || !game.player2.connection) return;
+    if (!game || !game.player2.connection || game.player1.connection) return;
     messageCommand(data, game.player2.connection);
     messageCommand(data, connection);
 
@@ -16,7 +16,7 @@ const endGameCommand = function (data, connection) {
 const moveCommand = function (data) {
     const game = gameManager.getPlayerGame(data.user_id);
     //TODO: Cancel game
-    if (!game || !game.player2.connection) return;
+    if (!game || !game.player2.connection || game.player1.connection) return;
     messageCommand(data, game.player2.connection);
 }
 
