@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "cancel_game",
+  "type": "object",
+  "allOf": [{"$ref": "/command"}],
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "user id in database"
+    },
+    "message": {
+      "type": "string",
+      "description": "reason why the game has been canceled"
+    },
+    "win": {
+      "type": "string",
+      "description": "if the remaining player get win"
+    }
+  },
+  "required": ["user_id", "winner"]
+}
+
