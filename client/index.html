@@ -35,7 +35,9 @@
             Veuillez saisir un pseudo et un mot de passe avant de jouer.
           </div>
           <div id="msg_retour"></div>
-          <button class="playButton" type="button" onclick="startGame()">Jouer en ligne</button>
+          <button class="playButton" type="button" onclick="startGame()">
+            Jouer en ligne
+          </button>
         </div>
 
         <div id="regle">
@@ -64,6 +66,8 @@
         <p id="winnerInfo" style="display: none">
           Et le gagnant est : <span id="winnerPlayer"></span>
         </p>
+
+        <p id="waitList"></span></p>
       </div>
 
       <div id="game">
@@ -80,52 +84,5 @@
       crossorigin="anonymous"
     ></script>
     <script src="game.js"></script>
-    <script>
-      function startGame() {
-        if (
-          document.getElementById("username").value == "" ||
-          document.getElementById("password").value == ""
-        ) {
-          $("#NoCredential").css("display", "inherit");
-        } else {
-
-          const ws = new WebSocket('ws://127.0.0.1:9898/');
-
-          //Recupere les valeurs en input de l'utilisateur
-          let login_input = document.getElementById("username").value;
-          let password_input = document.getElementById("password").value;
-
-          //Mets les valeurs récupéré dans un format json
-          let user_json = {
-            command: "form_login",
-            username: login_input,
-            password: password_input,
-            keepConnection: false,
-          };
-
-          //Transforme en objet Json
-          let msg_json = JSON.stringify(user_json);
-
-          // Envoie au serveur sous format json les valeurs saisie par l'utilisateur
-          ws.onmessage = function(e){
-            console.log(JSON.parse(e.data));
-            let msg = JSON.parse(e.data);
-          
-            if(msg.success === true){
-              console.log("EASY")
-              $("#menu").css("display", "none");
-              $("#gameContainer").css("display", "inherit");          
-            }else{
-              $("#msg_retour").html('<p>  ' + msg.message + '</p>');
-              $("#msg_retour").css("color", "red");
-              $("#NoCredential").css("display", "none");
-            }
-          }
-          ws.onopen = () => ws.send(msg_json);
-          console.log(msg_json);
-
-        }
-      }
-    </script>
   </body>
 </html>

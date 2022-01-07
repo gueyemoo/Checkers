@@ -1,3 +1,61 @@
+let currentPlayer = 1;
+let player_pos = Infinity;
+let id_joueur = "";
+
+
+function startGame() {
+    if (
+        document.getElementById("username").value == "" ||
+        document.getElementById("password").value == ""
+    ) {
+        $("#NoCredential").css("display", "inherit");
+    } else {
+
+        ws = new WebSocket("ws://127.0.0.1:9898/");
+
+        //Recupere les valeurs en input de l'utilisateur
+        let login_input = document.getElementById("username").value;
+        let password_input = document.getElementById("password").value;
+
+        //Mets les valeurs récupéré dans un format json
+        let user_json = {
+            command: "form_login",
+            username: login_input,
+            password: password_input,
+            keepConnection: false,
+        };
+
+        //Transforme en objet Json
+        let msg_json = JSON.stringify(user_json);
+
+        // Envoie au serveur sous format json les valeurs saisie par l'utilisateur
+        ws.onmessage = function (e) {
+            console.log(JSON.parse(e.data));
+            let msg = JSON.parse(e.data);
+
+            if (msg.success === true) {
+                $("#menu").css("display", "none");
+                $("#gameContainer").css("display", "inherit");
+            } else {
+                $("#msg_retour").html("<p>  " + msg.message + "</p>");
+                $("#msg_retour").css("color", "red");
+                $("#NoCredential").css("display", "none");
+            }
+
+            if (msg.user_id != null) {
+                currentPlayer = msg.user_color;
+                player_pos = msg.user_color;
+                id_joueur = msg.user_id;
+
+                console.log(msg.user_color);
+                console.log(id_joueur)
+            }
+        };
+        ws.onopen = () => ws.send(msg_json);
+        // console.log(msg_json);
+    }
+}
+
 $(document).ready(function () {
     let map = [
         [0, 3, 0, 3, 0, 3, 0, 3, 0, 3], // 0 : tile blanche vide
@@ -25,7 +83,6 @@ $(document).ready(function () {
     //     [1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
     // ];
 
-
     const EMPTY_WHITE_TILE = 0;
     const EMPTY_BLACK_TILE = 1;
 
@@ -35,11 +92,8 @@ $(document).ready(function () {
     const WHITE_QUEEN_PAWN = 20;
     const BLACK_QUEEN_PAWN = 30;
 
-    let currentPlayer = 1
     const PLAYER_ONE = 1;
     const PLAYER_TWO = 2;
-
-    let id_joueur = Infinity;
 
     let tile = [];
     let tileDiv = "";
@@ -106,9 +160,12 @@ $(document).ready(function () {
 
     function switchPlayer() { //Permet de changer de joueur courant
         if (currentPlayer == PLAYER_ONE) { // Si le joueur courant est le joueur 1 on passe au joueur 2
+
             currentPlayer = PLAYER_TWO;
+            $("#waitList").html("<b> Joueur " + PLAYER_TWO + " en attente..</b>")
         } else {
             currentPlayer = PLAYER_ONE;
+            $("#waitList").html("<b> Joueur " + PLAYER_ONE + " en attente..</b>")
         }
 
         showCurrentPlayer(); //Permet d'afficher à l'utilisateur le joueur qui doit actuellement jouer
@@ -129,10 +186,39 @@ $(document).ready(function () {
         stopAnimation(currentTile);//Enleve l'animation sur la case cliqué après le changement de position
         // $('#' + tile).css('background-color', 'red');
         currentTile = "";
-        switchPlayer();
-        resetTile();
         draw();
+        resetTile();
         checkWinner();
+
+        let map_stry = JSON.stringify(map);
+
+        //Mets les valeurs récupéré dans un format json
+        let msg_move_json = {
+            command: "move",
+            user_id: id_joueur,
+            user_color: currentPlayer,
+            map: map_stry
+        };
+
+        //Transforme en objet Json
+        let msg_m_json = JSON.stringify(msg_move_json);
+
+        // Envoie au serveur sous format json la map actuelle
+        ws.send(msg_m_json);
+
+        switchPlayer();
+        // ws.onmessage = function (e) {
+        //     if(e.data.map!=null){
+        //         // console.log("COUCOU "+e.data.map);
+        //     }else{
+        //         if(currentPlayer==PLAYER_ONE){
+        //             $("#waitList").html("<b> Joueur"+PLAYER_TWO+"en attente..</b>")
+        //         }else{
+        //             $("#waitList").html("<b> Joueur" + PLAYER_ONE + "en attente..</b>")
+        //         }
+        //     }
+        // };
+
     }
 
     function draw() { //Dessine chaque case de la map
@@ -1033,16 +1119,18 @@ $(document).ready(function () {
 
                 $('#tile' + row + col).click(function () { //Code qui s'execute à chaque clique sur une case de la map
                     if (!endGame) {
-                        if (checkPawnANDPlayer(this.id)) {
-                            clickedTile(this.id);
-                        } else if (isMovePossible(this.id) && canHeEat() == false && canQueenEat() == false) {
-                            makeMove(this.id);
-                        }
-                        else if (eatPossible(currentTile, this.id) && canHeEat() && canQueenEat() == false) { //CanHeEat() verifie qu'il y a une possibilité quelque part dans le tableau de manger un pion et eatPossible verifie que l'ont clique sur la bonne case pour manger le pion
-                            eatPawn(this.id);
-                        }
-                        else if (eatPossibleQueen(currentTile, this.id) && (canHeEat() == false && canQueenEat() || canHeEat() && canQueenEat())) {
-                            eatPawnQueen(this.id);
+                        if (player_pos == currentPlayer) {
+                            if (checkPawnANDPlayer(this.id)) {
+                                clickedTile(this.id);
+                            } else if (isMovePossible(this.id) && canHeEat() == false && canQueenEat() == false) {
+                                makeMove(this.id);
+                            }
+                            else if (eatPossible(currentTile, this.id) && canHeEat() && canQueenEat() == false) { //CanHeEat() verifie qu'il y a une possibilité quelque part dans le tableau de manger un pion et eatPossible verifie que l'ont clique sur la bonne case pour manger le pion
+                                eatPawn(this.id);
+                            }
+                            else if (eatPossibleQueen(currentTile, this.id) && (canHeEat() == false && canQueenEat() || canHeEat() && canQueenEat())) {
+                                eatPawnQueen(this.id);
+                            }
                         }
                     }
                 });
@@ -1052,4 +1140,3 @@ $(document).ready(function () {
 
     createMap();
 });
-
