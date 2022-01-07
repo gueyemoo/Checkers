@@ -10,7 +10,10 @@ const endGameCommand = function (data) {
 
 }
 const moveCommand = function (data) {
-
+    const game = gameManager.getPlayerGame(data.user_id);
+    //TODO: Cancel game
+    if (!game || !game.player2.connection) return;
+    messageCommand(data, game.player2.connection);
 }
 
 
