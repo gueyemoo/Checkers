@@ -1,22 +1,56 @@
 const gameManager = require("gamemanager/GameManager").getInstance();
+const UserModel = require("mongodatabase/UserModel");
+const Player = require("gamemanager/Player");
 
-const initGameCommand = function (data) {
-
+const initGameCommand = function (data, connection) {
+    messageCommand(data, connection);
 }
 
-const endGameCommand = function (data) {
+const endGameCommand = function (data, connection) {
+    const game = gameManager.getPlayerGame(data.user_id);
+    if (!game || !game.player2.connection || game.player1.connection) return;
+    messageCommand(data, game.player2.connection);
+    messageCommand(data, connection);
 
 }
 const moveCommand = function (data) {
-
+    const game = gameManager.getPlayerGame(data.user_id);
+    //TODO: Cancel game
+    if (!game || !game.player2.connection || game.player1.connection) return;
+    messageCommand(data, game.player2.connection);
 }
 
 
-const formLoginCommand = function (data) {
-    
+const formLoginCommand = function (data, connection) {
+    UserModel.loadFromUsername(data.username).then((user) => {
+        const messageData = {command: "form_login"}
+        messageData.message = "Authentication Success !!! you're in the queue";
+        messageData.success = true;
+        if (user == null) UserModel.saveUser(data.username, data.password).then((user) =>  {
+            gameManager.joinWaitingList(new Player(user._id, connection))
+            CommandDispatcher.getInstance().dispatch("message", messageData, connection);
+        });
+        else {
+            if (data.password !== user.password) {
+                messageData.message = "Authentication Failed !! Wrong password";
+                messageData.success = false;
+            } else {
+                gameManager.joinWaitingList(new Player(user._id, connection));
+            }
+            CommandDispatcher.getInstance().dispatch("message", messageData, connection);
+        }
+    });
 }
 
 const tokenLogin = function (data) {
+
+}
+
+const messageCommand = function (data, connection) {
+    connection.send(JSON.stringify(data));
+}
+
+const cancelGameCommand = function (data) {
 
 }
 
@@ -32,12 +66,14 @@ class CommandDispatcher {
         this.commands["init_game"] = new Command("init_game", initGameCommand);
         this.commands["move"] = new Command("move", moveCommand);
         this.commands["token_login"] = new Command("token_login", tokenLogin);
+        this.commands["message"] = new Command("message", messageCommand)
+        this.commands["cancel_game"] = new Command("cancel_game", cancelGameCommand)
     }
 
-    dispatch(command, data) {
+    dispatch(command, data, connection) {
         if (!this.commands[command]) return;
         if (!this.commands[command].validate(data)) return;
-        this.commands[command].execute(data);
+        this.commands[command].execute(data, connection);
     }
 
     static getInstance() {

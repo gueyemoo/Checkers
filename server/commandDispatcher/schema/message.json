@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "message",
   "type": "object",
-  "allOf": [{"$ref": "/server/commandDispatcher/schema/command.json"}],
+  "allOf": [{"$ref": "/command"}],
   "properties": {
     "message": {
       "type": "string",

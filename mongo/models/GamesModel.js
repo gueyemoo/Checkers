@@ -10,8 +10,8 @@ const {Schema} = mongoose;
 
 
 const gamesSchema = new Schema({
-    user_id_1: {type: Number, required: true, description: "first user id"},
-    user_id_2: {type: Number, required: true, description: "second user id"},
+    user_id_1: {type: String, required: true, description: "first user id"},
+    user_id_2: {type: String, required: true, description: "second user id"},
     datetime: {type: String, format: "date-time", required: true, description: "save date"},
     winner_id: {type: Number, required: false, description: "Winner user id"}
 });
@@ -21,16 +21,15 @@ class GamesModel {
     static table = mongoose.model("Games", gamesSchema);
 
     static loadFromID(gameID) {
-        return this.table.findOne({_id: gameID});
+        return this.table.findOne({_id: gameID}).exec();
     }
 
     static getUserGames(userID) {
-        return this.table.find({$or: [{user_id_1: userID}, {user_id_2: userID}]});
+        return this.table.find({$or: [{user_id_1: userID}, {user_id_2: userID}]}).exec();
     }
 
-    static async getUserLastGame(userId, callback) {
-        const game = await this.table.findOne({$or: [{user_id_1: userId}, {user_id_2: userId}]}).sort({_id: -1}).exec().then((game) => {return game});
-        callback(game);
+    static async getUserLastGame(userId) {
+        return this.table.findOne({$or: [{user_id_1: userId}, {user_id_2: userId}]}).sort({_id: -1}).exec();
     }
 
     static createNewGame(player1Id, player2Id) {
@@ -39,7 +38,7 @@ class GamesModel {
             "user_id_2": player2Id,
             "datetime": Date.now().toString()
         });
-        game.save();
+        return game.save();
     }
 }
 

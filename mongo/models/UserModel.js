@@ -18,16 +18,16 @@ class UserModel {
     static model = mongoose.model("Users", userSchema);
 
     static saveUser(username, hpassword) {
-        let user = new this.model({username: username, password: hpassword});
-        return user.save()
+        const user = new this.model({username: username, password: hpassword});
+        return user.save();
     }
 
     static loadFromID(userID) {
-        return this.model.findOne({_id: userID})
+        return this.model.findOne({_id: userID}).exec();
     }
 
     static loadFromUsername(username) {
-        return this.model.findOne({username: username})
+        return this.model.findOne({username: username}).exec();
     }
 
     static getUserGames(userID) {
@@ -40,4 +40,4 @@ class UserModel {
 
 }
 
-module.exports = {UserModel};
+module.exports = UserModel;
