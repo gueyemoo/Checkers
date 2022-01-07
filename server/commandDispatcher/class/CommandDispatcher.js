@@ -6,7 +6,11 @@ const initGameCommand = function (data, connection) {
     messageCommand(data, connection);
 }
 
-const endGameCommand = function (data) {
+const endGameCommand = function (data, connection) {
+    const game = gameManager.getPlayerGame(data.user_id);
+    if (!game || !game.player2.connection) return;
+    messageCommand(data, game.player2.connection);
+    messageCommand(data, connection);
 
 }
 const moveCommand = function (data) {
