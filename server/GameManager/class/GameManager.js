@@ -50,7 +50,7 @@ class GameManager {
     getPlayerGame(playerId) {
         let playerGame = null;
         this.games.forEach((game) => {
-            if (game.player1.userId === playerId) {
+            if (game.player1.userId === playerId || game.player2.userId === playerId) {
                 playerGame = game;
             }
         });
