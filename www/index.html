@@ -34,7 +34,13 @@
           <div id="NoCredential">
             Veuillez saisir un pseudo et un mot de passe avant de jouer.
           </div>
-          <button type="button" onclick="startGame()">Jouer</button>
+          <div id="msg_retour"></div>
+          <button class="playButton" type="button" onclick="startGameOnline()">
+            Jouer en ligne
+          </button>
+          <button class="playButton" type="button" onclick="startGameLocal()">
+            Jouer en local
+          </button>
         </div>
 
         <div id="regle">
@@ -49,11 +55,6 @@
             </li>
             <li>Les prises sont obligatoires.</li>
             <li>un Pion peut reculer en mangeant !</li>
-            <li>
-              <a href="https://www.regledujeu.fr/regle-jeu-de-dames/">
-                etc...
-              </a>
-            </li>
           </ul>
         </div>
       </div>
@@ -68,6 +69,8 @@
         <p id="winnerInfo" style="display: none">
           Et le gagnant est : <span id="winnerPlayer"></span>
         </p>
+
+        <p id="waitList"></span></p>
       </div>
 
       <div id="game">
@@ -84,40 +87,5 @@
       crossorigin="anonymous"
     ></script>
     <script src="game.js"></script>
-    <script>
-      function startGame() {
-        if (
-          document.getElementById("username").value == "" ||
-          document.getElementById("password").value == ""
-        ) {
-          $("#NoCredential").css("display", "inherit");
-        } else {
-          $("#menu").css("display", "none");
-
-          // const ws = new WebSocket('ws://127.0.0.1:9898/');
-
-          //Recupere les valeurs en input de l'utilisateur
-          var login_input = document.getElementById("username").value;
-          var password_input = document.getElementById("password").value;
-
-          //Mets les valeurs récupéré dans un format json
-          var user_json = {
-            command: "form_login",
-            username: login_input,
-            password: password_input,
-            keepConnection: false,
-          };
-
-          //Transforme en objet Json
-          var msg_json = JSON.stringify(user_json);
-
-          // Envoie au serveur sous format json les valeurs saisie par l'utilisateur
-          // ws.send(msg_json);
-          console.log(msg_json);
-
-          $("#gameContainer").css("display", "inherit");
-        }
-      }
-    </script>
   </body>
 </html>
