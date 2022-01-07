@@ -10,8 +10,8 @@ const {Schema} = mongoose;
 
 
 const gamesSchema = new Schema({
-    user_id_1: {type: Number, required: true, description: "first user id"},
-    user_id_2: {type: Number, required: true, description: "second user id"},
+    user_id_1: {type: String, required: true, description: "first user id"},
+    user_id_2: {type: String, required: true, description: "second user id"},
     datetime: {type: String, format: "date-time", required: true, description: "save date"},
     winner_id: {type: Number, required: false, description: "Winner user id"}
 });
