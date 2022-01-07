@@ -27,21 +27,22 @@ class GameManager {
     }
 
     createGame(player1, player2) {
-        GamesModel.createNewGame(player1.userId, player2.userId);
-        GamesModel.getUserLastGame(player1.userId, GameManager.addGame);
-        const player1Data = {
-            "command": "init_game",
-            "user_id": player1.userId,
-            "user_color": 1
-        };
-        const player2Data = {
-            "command": "init_game",
-            "user_id": player1.userId,
-            "user_color": 2
-        }
-        const commandDispatcher = require("commanddispatcher/CommandDispatcher").getInstance();
-        commandDispatcher.dispatch("init_game", player1Data);
-        commandDispatcher.dispatch("init_game", player2Data);
+        GamesModel.createNewGame(player1.userId, player2.userId).then((game) => {
+            this.addGame(game);
+            const player1Data = {
+                "command": "init_game",
+                "user_id": player1.userId.toString(),
+                "user_color": 1
+            };
+            const player2Data = {
+                "command": "init_game",
+                "user_id": player2.userId.toString(),
+                "user_color": 2
+            }
+            const commandDispatcher = require("commanddispatcher/CommandDispatcher").getInstance();
+            commandDispatcher.dispatch("init_game", player1Data, player1.connection);
+            commandDispatcher.dispatch("init_game", player2Data, player2.connection);
+        });
     }
 
     static getInstance() {
