@@ -47,6 +47,16 @@ class GameManager {
         });
     }
 
+    getPlayerGame(playerId) {
+        let playerGame = null;
+        this.games.forEach((game) => {
+            if (game.player1.userId === playerId) {
+                playerGame = game;
+            }
+        });
+        return playerGame;
+    }
+
     static getInstance() {
         if (GameManager.instance == null) GameManager.instance = new GameManager();
         return GameManager.instance;
